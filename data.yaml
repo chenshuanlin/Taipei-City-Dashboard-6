@@ -1,0 +1,4 @@
+train: C:/Users/user/Desktop/yolo/images/train  # 訓練集圖片的路徑
+val: C:/Users/user/Desktop/yolo/images/val      # 驗證集圖片的路徑
+nc: 1                                           # 類別數，對於車牌辨識這邊設為 1
+names: ['license_plate']                        # 類別名稱，這邊是 'license_plate'
