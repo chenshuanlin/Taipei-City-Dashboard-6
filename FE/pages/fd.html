@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <title>違規罰單</title>
+    <style>
+        body {
+            font-family: "Microsoft JhengHei", sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .ticket-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #000;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .ticket-info {
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: inline-block;
+            width: 120px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 200px;
+            padding: 5px;
+        }
+
+        .signature-area {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .signature-box {
+            border-top: 1px solid #000;
+            width: 200px;
+            padding-top: 5px;
+            text-align: center;
+        }
+
+        .button-group {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .button-group button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            cursor: pointer;
+        }
+
+        @media print {
+            .button-group {
+                display: none;
+            }
+
+            body {
+                padding: 0;
+            }
+
+            .ticket-container {
+                border: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="ticket-container">
+        <div class="header">
+            <h1>違規罰單</h1>
+            <p>單號：<span id="ticketNumber"></span></p>
+            <p>開立日期：<span id="currentDate"></span></p>
+        </div>
+
+        <div class="ticket-info">
+            <div class="form-group">
+                <label>違規人姓名：</label>
+                <input type="text" id="name" required>
+            </div>
+
+            <div class="form-group">
+                <label>身分證字號：</label>
+                <input type="text" id="idNumber" required>
+            </div>
+
+            <div class="form-group">
+                <label>違規地點：</label>
+                <input type="text" id="location" required>
+            </div>
+
+            <div class="form-group">
+                <label>違規項目：</label>
+                <select id="violationType" required>
+                    <option value="">請選擇違規項目</option>
+                    <option value="超速">超速</option>
+                    <option value="闖紅燈">闖紅燈</option>
+                    <option value="未戴安全帽">未戴安全帽</option>
+                    <option value="違規停車">違規停車</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>罰款金額：</label>
+                <input type="number" id="fineAmount" required>
+            </div>
+
+            <div class="form-group">
+                <label>備註：</label>
+                <input type="text" id="remarks">
+            </div>
+        </div>
+
+        <div class="signature-area">
+            <div class="signature-box">
+                <p>開立人員簽名</p>
+            </div>
+            <div class="signature-box">
+                <p>違規人簽名</p>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button onclick="generateTicketNumber()">產生單號</button>
+            <button onclick="window.print()">列印罰單</button>
+            <button onclick="resetForm()">重置表單</button>
+        </div>
+    </div>
+
+    <script>
+        // 設置當前日期
+        function setCurrentDate() {
+            const now = new Date();
+            const dateStr = now.getFullYear() + '/' +
+                (now.getMonth() + 1).toString().padStart(2, '0') + '/' +
+                now.getDate().toString().padStart(2, '0');
+            document.getElementById('currentDate').textContent = dateStr;
+        }
+
+        // 產生罰單編號
+        function generateTicketNumber() {
+            const prefix = 'TKT';
+            const timestamp = Date.now().toString().slice(-6);
+            const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+            const ticketNumber = `${prefix}${timestamp}${random}`;
+            document.getElementById('ticketNumber').textContent = ticketNumber;
+        }
+
+        // 重置表單
+        function resetForm() {
+            document.getElementById('name').value = '';
+            document.getElementById('idNumber').value = '';
+            document.getElementById('location').value = '';
+            document.getElementById('violationType').value = '';
+            document.getElementById('fineAmount').value = '';
+            document.getElementById('remarks').value = '';
+            document.getElementById('ticketNumber').textContent = '';
+            setCurrentDate();
+        }
+
+        // 頁面載入時初始化
+        window.onload = function () {
+            setCurrentDate();
+            generateTicketNumber();
+        };
+    </script>
+</body>
+
+</html>

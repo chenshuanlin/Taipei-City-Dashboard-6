@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>車牌辨識系統</title>
+    <link rel="stylesheet" href="../assets/css/lic.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="flex">
+            <!-- 左側卡片：車牌擷取 -->
+            <div class="card card-capture">
+                <div class="card-header">
+                    <h2 class="card-title">車牌擷取</h2>
+                </div>
+                <div class="card-content">
+                    <div class="space-y">
+                        <div class="upload-area" id="uploadArea">
+                            <div class="preview-container" id="previewContainer">
+                                <i data-lucide="camera" class="preview-icon"></i>
+                                <p class="preview-text">點擊上傳或拍攝車牌照片</p>
+                            </div>
+                        </div>
+
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+                                <i data-lucide="upload"></i>
+                                上傳圖片
+                            </button>
+                            <button class="btn btn-outline">
+                                <i data-lucide="camera"></i>
+                                開啟相機
+                            </button>
+                            <input id="fileInput" type="file" accept="image/*" hidden
+                                onchange="handleFileUpload(event)">
+                        </div>
+
+                        <div class="manual-input">
+                            <h3 class="input-title">手動輸入</h3>
+                            <div class="input-group">
+                                <input type="text" class="text-input" placeholder="車牌號碼 (例: ABC-1234)" id="plateInput">
+                                <button class="btn btn-outline btn-full" onclick="handleManualSubmit()">
+                                    <i data-lucide="car"></i>
+                                    確認輸入
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右側卡片：辨識結果 -->
+            <div class="card card-result">
+                <div class="card-header">
+                    <h2 class="card-title">辨識結果</h2>
+                </div>
+                <div class="card-content">
+                    <div class="results-container" id="resultsContainer">
+                        <div class="no-results">
+                            尚未進行辨識
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 結果範本 -->
+    <template id="resultsTemplate">
+        <div class="space-y">
+            <div class="success-banner">
+                <i data-lucide="check-circle" class="success-icon"></i>
+                <div class="success-content">
+                    <h3 class="success-title">辨識成功</h3>
+                    <p class="success-subtitle">符合度: <span class="confidence">98.5</span>%</p>
+                </div>
+            </div>
+
+            <div class="results-grid">
+                <div class="result-item">
+                    <p class="result-label">車牌號碼</p>
+                    <p class="result-value plate-number">ABC-1234</p>
+                </div>
+                <div class="result-item">
+                    <p class="result-label">辨識時間</p>
+                    <p class="result-value timestamp">2024-12-25 14:30:22</p>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        // 初始化 Lucide 圖標
+        lucide.createIcons();
+
+        // 模擬結果數據
+        const mockResults = {
+            plateNumber: 'ABC-1234',
+            confidence: 98.5,
+            timestamp: new Date().toLocaleString()
+        };
+
+        // 處理文件上傳
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const previewContainer = document.getElementById('previewContainer');
+                    previewContainer.innerHTML = `<img src="${e.target.result}" alt="Preview" class="preview-image">`;
+
+                    // 模擬辨識過程
+                    setTimeout(() => showResults(mockResults), 1000);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // 處理手動輸入
+        function handleManualSubmit() {
+            const plateInput = document.getElementById('plateInput');
+            const plateNumber = plateInput.value.trim();
+
+            if (plateNumber) {
+                const manualResults = {
+                    plateNumber: plateNumber,
+                    confidence: '手動輸入',
+                    timestamp: new Date().toLocaleString()
+                };
+                showResults(manualResults);
+            }
+        }
+
+        // 顯示結果
+        function showResults(results) {
+            const container = document.getElementById('resultsContainer');
+            const template = document.getElementById('resultsTemplate');
+            const clone = template.content.cloneNode(true);
+
+            if (results.confidence === '手動輸入') {
+                clone.querySelector('.success-title').textContent = '手動輸入完成';
+                clone.querySelector('.success-subtitle').style.display = 'none';
+            } else {
+                clone.querySelector('.confidence').textContent = results.confidence;
+            }
+
+            clone.querySelector('.plate-number').textContent = results.plateNumber;
+            clone.querySelector('.timestamp').textContent = results.timestamp;
+
+            container.innerHTML = '';
+            container.appendChild(clone);
+
+            // 重新初始化新添加的圖標
+            lucide.createIcons();
+        }
+
+        // 上傳區域點擊事件
+        document.getElementById('uploadArea').addEventListener('click', function () {
+            document.getElementById('fileInput').click();
+        });
+    </script>
+</body>
+
+</html>

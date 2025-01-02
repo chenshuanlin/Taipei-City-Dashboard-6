@@ -1,0 +1,264 @@
+/* 基礎樣式設定 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.5;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+/* 卡片樣式 */
+.card {
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.card-content {
+    padding: 1rem;
+}
+
+.mb-4 {
+    margin-bottom: 1rem;
+}
+
+/* 網格布局 */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+/* 上傳區域樣式 */
+.upload-area {
+    border: 2px dashed #ccc;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.upload-area:hover {
+    border-color: #3b82f6;
+}
+
+.upload-icon {
+    width: 3rem;
+    height: 3rem;
+    color: #9ca3af;
+    margin-bottom: 1rem;
+}
+
+.upload-text {
+    color: #6b7280;
+}
+
+.upload-hint {
+    font-size: 0.875rem;
+    color: #9ca3af;
+    margin-top: 0.5rem;
+}
+
+/* 預覽區域樣式 */
+.preview-area {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.preview-image {
+    width: 100%;
+    height: 16rem;
+    object-fit: cover;
+    border-radius: 0.5rem;
+}
+
+.retry-button {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    background: #f3f4f6;
+    border: none;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.retry-button:hover {
+    background: #e5e7eb;
+}
+
+/* 辨識狀態樣式 */
+.recognition-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.recognition-state {
+    text-align: center;
+}
+
+.state-icon {
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 1rem;
+}
+
+.spinning {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* 成功狀態樣式 */
+.success-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.success {
+    color: #10b981;
+}
+
+.success-text {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.result-container {
+    background: #f9fafb;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.result-group {
+    margin-bottom: 1rem;
+}
+
+.result-group:last-child {
+    margin-bottom: 0;
+}
+
+.result-group label {
+    display: block;
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-bottom: 0.25rem;
+}
+
+.result-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+/* 信心度進度條 */
+.confidence-bar {
+    height: 0.5rem;
+    background: #e5e7eb;
+    border-radius: 0.25rem;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.confidence-progress {
+    height: 100%;
+    background: #3b82f6;
+    width: 0;
+    transition: width 0.3s ease;
+}
+
+.confidence-value {
+    text-align: right;
+    font-weight: 600;
+    color: #3b82f6;
+}
+
+/* 操作按鈕 */
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.action-buttons button {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.confirm-button {
+    background: #10b981;
+    color: white;
+}
+
+.confirm-button:hover {
+    background: #059669;
+}
+
+.edit-button {
+    background: #f3f4f6;
+}
+
+.edit-button:hover {
+    background: #e5e7eb;
+}
+
+/* 錯誤狀態樣式 */
+.error {
+    color: #ef4444;
+}
+
+.error-text {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #ef4444;
+}
+
+.error-hint {
+    color: #6b7280;
+    margin-top: 0.5rem;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}

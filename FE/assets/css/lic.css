@@ -1,0 +1,254 @@
+/* 基礎設置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.5;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+/* Flex 布局 */
+.flex {
+    display: flex;
+    gap: 1rem;
+}
+
+/* 卡片樣式 */
+.card {
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.card-capture {
+    width: 24rem;
+}
+
+.card-result {
+    flex: 1;
+}
+
+.card-header {
+    padding: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.card-title {
+    font-size: 1.125rem;
+    font-weight: 500;
+}
+
+.card-content {
+    padding: 1rem;
+}
+
+/* 間距工具類 */
+.space-y {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* 上傳區域 */
+.upload-area {
+    border: 2px dashed #e5e7eb;
+    border-radius: 0.5rem;
+    height: 16rem;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.upload-area:hover {
+    border-color: #3b82f6;
+}
+
+.preview-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f9fafb;
+}
+
+.preview-icon {
+    width: 3rem;
+    height: 3rem;
+    color: #9ca3af;
+}
+
+.preview-text {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* 按鈕樣式 */
+.button-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+
+.btn i {
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.5rem;
+}
+
+.btn-primary {
+    background-color: #3b82f6;
+    color: white;
+    flex: 1;
+}
+
+.btn-primary:hover {
+    background-color: #2563eb;
+}
+
+.btn-outline {
+    background-color: white;
+    border-color: #e5e7eb;
+    color: #374151;
+    flex: 1;
+}
+
+.btn-outline:hover {
+    background-color: #f9fafb;
+}
+
+.btn-full {
+    width: 100%;
+}
+
+/* 手動輸入區域 */
+.manual-input {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 1rem;
+}
+
+.input-title {
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.text-input {
+    padding: 0.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+}
+
+.text-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    ring: 2px solid rgba(59, 130, 246, 0.5);
+}
+
+/* 結果區域 */
+.no-results {
+    height: 12rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
+}
+
+.success-banner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: #ecfdf5;
+    border-radius: 0.5rem;
+}
+
+.success-icon {
+    width: 2rem;
+    height: 2rem;
+    color: #10b981;
+}
+
+.success-title {
+    font-weight: 500;
+    color: #064e3b;
+}
+
+.success-subtitle {
+    font-size: 0.875rem;
+    color: #065f46;
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.result-item {
+    grid-column: span 2;
+    padding: 1rem;
+    background-color: #f9fafb;
+    border-radius: 0.5rem;
+}
+
+.result-label {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.result-value {
+    font-weight: 500;
+}
+
+.plate-number {
+    font-size: 1.25rem;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .flex {
+        flex-direction: column;
+    }
+    
+    .card-capture {
+        width: 100%;
+    }
+}

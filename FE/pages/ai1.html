@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>車牌辨識子系統</title>
+  <link rel="stylesheet" href="../assets/css/ai.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <div class="card mb-4">
+      <div class="card-header">
+        <h2 class="card-title">
+          <i data-lucide="camera"></i>
+          車牌辨識子系統
+        </h2>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">影像上傳與預覽</h2>
+        </div>
+        <div class="card-content">
+          <div class="upload-area" id="uploadArea">
+            <input type="file" id="imageUpload" accept="image/*" hidden>
+            <i data-lucide="upload" class="upload-icon"></i>
+            <p class="upload-text">點擊或拖曳上傳圖片</p>
+            <p class="upload-hint">支援 JPG, PNG 格式</p>
+          </div>
+          <div class="preview-area" id="previewArea" hidden>
+            <img id="imagePreview" alt="Preview" class="preview-image">
+            <button class="retry-button" id="retryButton">
+              <i data-lucide="refresh-cw"></i>
+              重新上傳
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">辨識結果</h2>
+        </div>
+        <div class="card-content">
+          <div class="recognition-content">
+            <!-- 等待上傳狀態 -->
+            <div class="recognition-state" id="waitingState">
+              <i data-lucide="camera" class="state-icon"></i>
+              <p>請上傳圖片進行辨識</p>
+            </div>
+
+            <!-- 處理中狀態 -->
+            <div class="recognition-state" id="processingState" hidden>
+              <i data-lucide="refresh-cw" class="state-icon spinning"></i>
+              <p>辨識中，請稍候...</p>
+            </div>
+
+            <!-- 成功狀態 -->
+            <div class="recognition-state" id="successState" hidden>
+              <div class="success-header">
+                <i data-lucide="check-circle" class="state-icon success"></i>
+                <p class="success-text">辨識完成</p>
+              </div>
+
+              <div class="result-container">
+                <div class="result-group">
+                  <label>辨識結果</label>
+                  <div class="result-value" id="recognitionResult">ABC-1234</div>
+                </div>
+
+                <div class="result-group">
+                  <label>辨識信心度</label>
+                  <div class="confidence-bar">
+                    <div class="confidence-progress" id="confidenceBar"></div>
+                  </div>
+                  <div class="confidence-value">
+                    <span id="confidenceValue">95.7</span>%
+                  </div>
+                </div>
+              </div>
+
+              <div class="action-buttons">
+                <button class="confirm-button">確認使用</button>
+                <button class="edit-button">手動修正</button>
+              </div>
+            </div>
+
+            <!-- 失敗狀態 -->
+            <div class="recognition-state" id="failedState" hidden>
+              <i data-lucide="x-circle" class="state-icon error"></i>
+              <p class="error-text">辨識失敗</p>
+              <p class="error-hint">請重新上傳清晰的車牌圖片</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 初始化 Lucide 圖標
+    lucide.createIcons();
+
+    // DOM 元素
+    const uploadArea = document.getElementById('uploadArea');
+    const previewArea = document.getElementById('previewArea');
+    const imageUpload = document.getElementById('imageUpload');
+    const imagePreview = document.getElementById('imagePreview');
+    const retryButton = document.getElementById('retryButton');
+    const states = {
+      waiting: document.getElementById('waitingState'),
+      processing: document.getElementById('processingState'),
+      success: document.getElementById('successState'),
+      failed: document.getElementById('failedState')
+    };
+
+    // 顯示指定狀態
+    function showState(stateName) {
+      Object.entries(states).forEach(([name, element]) => {
+        element.hidden = (name !== stateName);
+      });
+    }
+
+    // 處理圖片上傳
+    imageUpload.addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = function () {
+          imagePreview.src = reader.result;
+          uploadArea.hidden = true;
+          previewArea.hidden = false;
+          showState('processing');
+
+          // 模擬辨識過程
+          setTimeout(() => {
+            showState('success');
+            document.getElementById('confidenceBar').style.width = '95.7%';
+          }, 2000);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // 點擊上傳區域觸發文件選擇
+    uploadArea.addEventListener('click', () => {
+      imageUpload.click();
+    });
+
+    // 重新上傳
+    retryButton.addEventListener('click', () => {
+      uploadArea.hidden = false;
+      previewArea.hidden = true;
+      imageUpload.value = '';
+      showState('waiting');
+    });
+  </script>
+</body>
+
+</html>
