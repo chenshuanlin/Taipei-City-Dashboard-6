@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>交通局佐理人管理系統</title>
+    <link rel="stylesheet" href="../assets/css/deal.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">交通局佐理人管理系統</div>
+            <div class="menu-item active" data-section="case-management">案件管理</div>
+            <div class="menu-item" data-section="statistics">數據統計</div>
+            <!--<div class="menu-item" data-section="personnel">人員管理</div>
+            <div class="menu-item" data-section="settings">系統設定</div>-->
+        </div>
+
+        <div class="main-content">
+            <!-- 案件管理 -->
+            <div id="case-management" class="content-section active">
+                <div class="header">
+                    <h1>案件管理</h1>
+                </div>
+
+                <div class="status-cards">
+                    <div class="card">
+                        <div class="card-title">待處理案件</div>
+                        <div class="card-value">24</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">處理中案件</div>
+                        <div class="card-value">15</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">已處理案件</div>
+                        <div class="card-value">158</div>
+                    </div>
+                </div>
+
+                <div class="case-list">
+                    <div class="list-header">
+                        <div>案件編號</div>
+                        <div>檢舉時間</div>
+                        <div>違規地點</div>
+                        <div>違規項目</div>
+                        <div>狀態</div>
+                        <div>操作</div>
+                    </div>
+
+                    <div class="list-item">
+                        <div>TIC001</div>
+                        <div>2025/01/02</div>
+                        <div>中山路一段</div>
+                        <div>違規停車</div>
+                        <div><span class="status-badge status-pending">待處理</span></div>
+                        <div><button class="action-btn" onclick="showCaseDetail('TIC001', '待處理')">處理</button></div>
+                    </div>
+
+                    <div class="list-item">
+                        <div>TIC002</div>
+                        <div>2025/01/02</div>
+                        <div>忠孝東路</div>
+                        <div>闖紅燈</div>
+                        <div><span class="status-badge status-processing">處理中</span></div>
+                        <div><button class="action-btn" onclick="showCaseDetail('TIC002', '處理中')">查看</button></div>
+                    </div>
+
+                    <div class="list-item">
+                        <div>TIC003</div>
+                        <div>2025/01/01</div>
+                        <div>南京東路</div>
+                        <div>超速</div>
+                        <div><span class="status-badge status-completed">已處理</span></div>
+                        <div><button class="action-btn" onclick="showCaseDetail('TIC003', '已處理')">查看</button></div>
+                    </div>
+                </div>
+
+                <div class="header">
+                    <h1>案件管理</h1>
+                    <button class="action-btn" onclick="showAIFailedCases()">AI辨識失敗清單</button>
+                </div>
+
+                <div class="ai-failed-list" id="aiFailed">
+                    <h2>AI辨識失敗清單</h2>
+                    <div class="image-grid">
+                        <div class="image-card">
+                            <img src="/api/placeholder/400/300" alt="違規照片1">
+                            <div class="details">
+                                <p>拍攝時間: 2025/01/02 14:30</p>
+                                <p>地點: 中山路二段</p>
+                                <button class="action-btn verify-btn"
+                                    onclick="showVerificationModal('IMG001')">進行人工辨識</button>
+                            </div>
+                        </div>
+                        <div class="image-card">
+                            <img src="/api/placeholder/400/300" alt="違規照片2">
+                            <div class="details">
+                                <p>拍攝時間: 2025/01/02 15:45</p>
+                                <p>地點: 復興南路</p>
+                                <button class="action-btn verify-btn"
+                                    onclick="showVerificationModal('IMG002')">進行人工辨識</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="verificationModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeVerificationModal()">&times;</span>
+                        <h2>人工辨識</h2>
+                        <div class="verify-content">
+                            <img src="/api/placeholder/600/400" alt="待辨識照片" style="width:100%; margin:20px 0;">
+                            <div>
+                                <p><strong>違規類型：</strong></p>
+                                <select id="violationType" style="width:100%; padding:10px; margin:10px 0;">
+                                    <option value="">請選擇違規類型</option>
+                                    <option value="parking">違規停車</option>
+                                    <option value="redlight">闖紅燈</option>
+                                    <option value="speed">超速</option>
+                                </select>
+                                <textarea id="verificationNote" placeholder="請輸入備註說明"
+                                    style="width:100%; padding:10px; margin:10px 0; height:100px;"></textarea>
+                                <button class="action-btn" onclick="submitVerification()">確認送出</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 數據統計 -->
+            <div id="statistics" class="content-section">
+                <h1>數據統計</h1>
+                <p>數據統計內容</p>
+            </div>
+
+            <!-- 人員管理 -->
+            <!--<div id="personnel" class="content-section">
+                <h1>人員管理</h1>
+                <p>人員管理內容</p>
+            </div>-->
+
+            <!-- 系統設定 -->
+            <!--<div id="settings" class="content-section">
+                <h1>系統設定</h1>
+                <p>系統設定內容</p>
+            </div>-->
+        </div>
+    </div>
+
+    <!-- 案件詳情模態框 -->
+    <div id="caseModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>案件詳情</h2>
+            <div id="caseDetail" class="case-detail">
+                <!-- 案件詳情內容將由JavaScript動態插入 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 側邊欄選單切換
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', () => {
+                // 移除所有active類別
+                document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+                document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
+
+                // 添加active到當前項目
+                item.classList.add('active');
+
+                // 顯示對應內容
+                const sectionId = item.getAttribute('data-section');
+                document.getElementById(sectionId).classList.add('active');
+            });
+        });
+
+        // 案件詳情處理
+        function showCaseDetail(caseId, status) {
+            const modal = document.getElementById('caseModal');
+            const caseDetail = document.getElementById('caseDetail');
+
+            // 根據案件狀態顯示不同內容
+            let content = `
+                <p><strong>案件編號：</strong>${caseId}</p>
+                <p><strong>案件狀態：</strong>${status}</p>
+                <p><strong>檢舉人：</strong>王小明</p>
+                <p><strong>聯絡電話：</strong>0912-345-678</p>
+                <p><strong>違規詳情：</strong>車輛停放於紅線區域，阻礙交通</p>
+                <p><strong>照片證據：</strong><img src="/api/placeholder/400/300" alt="違規照片"></p>
+            `;
+
+            if (status === '待處理') {
+                content += `
+                    <div style="margin-top: 20px">
+                        <button class="action-btn" onclick="processCase('${caseId}')">開始處理</button>
+                    </div>
+                `;
+            } else if (status === '處理中') {
+                content += `
+                    <div style="margin-top: 20px">
+                        <textarea id="processNote" placeholder="請輸入處理說明" style="width: 100%; padding: 10px; margin-bottom: 10px;"></textarea>
+                        <button class="action-btn" onclick="completeCase('${caseId}')">完成處理</button>
+                    </div>
+                `;
+            }
+
+            caseDetail.innerHTML = content;
+            modal.style.display = 'block';
+        }
+
+        // 新增完成處理函數
+        function completeCase(caseId) {
+            const processNote = document.getElementById('processNote').value;
+            if (!processNote.trim()) {
+                alert('請填寫處理說明');
+                return;
+            }
+
+            // 更新案件狀態顯示
+            const caseElements = document.querySelectorAll('.list-item');
+            caseElements.forEach(item => {
+                if (item.firstElementChild.textContent === caseId) {
+                    const statusElement = item.children[4].firstElementChild;
+                    statusElement.textContent = '已處理';
+                    statusElement.className = 'status-badge status-completed';
+
+                    // 更新按鈕
+                    const actionButton = item.querySelector('.action-btn');
+                    actionButton.textContent = '查看';
+                    actionButton.onclick = () => showCaseDetail(caseId, '已處理');
+                }
+            });
+
+            alert('案件處理完成');
+            closeModal();
+        }
+
+        // 關閉模態框
+        function closeModal() {
+            document.getElementById('caseModal').style.display = 'none';
+        }
+
+        // 處理案件
+        function processCase(caseId) {
+            alert(`開始處理案件 ${caseId}`);
+            closeModal();
+            // 在這裡可以添加更新案件狀態的邏輯
+        }
+
+        // 點擊模態框外部時關閉
+        window.onclick = function (event) {
+            const modal = document.getElementById('caseModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        function showAIFailedCases() {
+            document.querySelector('.case-list').style.display = 'none';
+            document.getElementById('aiFailed').classList.add('active');
+        }
+
+        function showVerificationModal(imageId) {
+            const modal = document.getElementById('verificationModal');
+            modal.setAttribute('data-image-id', imageId);
+            modal.style.display = 'block';
+        }
+
+        function closeVerificationModal() {
+            document.getElementById('verificationModal').style.display = 'none';
+        }
+
+        function submitVerification() {
+            const violationType = document.getElementById('violationType').value;
+            const note = document.getElementById('verificationNote').value;
+
+            if (!violationType) {
+                alert('請選擇違規類型');
+                return;
+            }
+
+            if (!note.trim()) {
+                alert('請輸入備註說明');
+                return;
+            }
+
+            const imageId = document.getElementById('verificationModal').getAttribute('data-image-id');
+            alert(`已完成人工辨識：${imageId}`);
+            closeVerificationModal();
+
+            // 移除已處理的照片卡片
+            document.querySelector(`[onclick="showVerificationModal('${imageId}')"]`)
+                .closest('.image-card').remove();
+        }
+
+        function submitVerification() {
+            const violationType = document.getElementById('violationType').value;
+            const note = document.getElementById('verificationNote').value;
+
+            if (!violationType) {
+                alert('請選擇違規類型');
+                return;
+            }
+
+            if (!note.trim()) {
+                alert('請輸入備註說明');
+                return;
+            }
+
+            const imageId = document.getElementById('verificationModal').getAttribute('data-image-id');
+
+            // 取得目前時間
+            const now = new Date();
+            const formattedDate = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}`;
+
+            // 建立新的案件編號 (使用時間戳記確保唯一性)
+            const newCaseId = `TIC${now.getTime().toString().slice(-6)}`;
+
+            // 違規類型對照
+            const violationTypeMap = {
+                'parking': '違規停車',
+                'redlight': '闖紅燈',
+                'speed': '超速'
+            };
+
+            // 在案件列表中插入新案件
+            const caseList = document.querySelector('.case-list');
+            const newCase = document.createElement('div');
+            newCase.className = 'list-item';
+            newCase.innerHTML = `
+                <div>${newCaseId}<span class="source-tag">人工辨識</span></div>
+                <div>${formattedDate}</div>
+                <div>${document.querySelector(`[onclick="showVerificationModal('${imageId}')"]`).closest('.image-card').querySelector('.details p:nth-child(2)').textContent.replace('地點: ', '')}</div>
+                <div>${violationTypeMap[violationType]}</div>
+                <div><span class="status-badge status-pending">待處理</span></div>
+                <div><button class="action-btn" onclick="showCaseDetail('${newCaseId}', '待處理', '${note}')">處理</button></div>
+            `;
+
+            // 插入到列表的第一個項目之後
+            const firstItem = caseList.querySelector('.list-item');
+            if (firstItem) {
+                caseList.insertBefore(newCase, firstItem);
+            } else {
+                caseList.appendChild(newCase);
+            }
+
+            // 更新計數
+            const pendingCaseCard = document.querySelector('.status-cards .card:first-child .card-value');
+            pendingCaseCard.textContent = parseInt(pendingCaseCard.textContent) + 1;
+
+            alert(`已完成人工辨識並建立新案件：${newCaseId}`);
+            closeVerificationModal();
+
+            // 移除已處理的照片卡片
+            document.querySelector(`[onclick="showVerificationModal('${imageId}')"]`)
+                .closest('.image-card').remove();
+
+            // 如果AI辨識失敗清單為空，則返回案件列表
+            const remainingCards = document.querySelectorAll('.image-card');
+            if (remainingCards.length === 0) {
+                document.querySelector('.case-list').style.display = 'block';
+                document.getElementById('aiFailed').classList.remove('active');
+            }
+        }
+
+        // 修改 showCaseDetail 函數以包含備註
+        function showCaseDetail(caseId, status, note = '') {
+            const modal = document.getElementById('caseModal');
+            const caseDetail = document.getElementById('caseDetail');
+
+            // 檢查是否為人工辨識案件
+            const caseElement = Array.from(document.querySelectorAll('.list-item')).find(item =>
+                item.firstElementChild.textContent.includes(caseId)
+            );
+            const isManualVerification = caseElement.querySelector('.source-tag') !== null;
+
+            let content = `
+                <p><strong>案件編號：</strong>${caseId}</p>
+                <p><strong>案件狀態：</strong>${status}</p>
+                <p><strong>檢舉人：</strong>王小明</p>
+                <p><strong>聯絡電話：</strong>0912-345-678</p>
+                <p><strong>違規詳情：</strong>車輛停放於紅線區域，阻礙交通</p>
+            `;
+
+            if (isManualVerification) {
+                content += `<p><strong>人工辨識備註：</strong>${note}</p>`;
+            }
+
+            content += `<p><strong>照片證據：</strong><img src="/api/placeholder/400/300" alt="違規照片"></p>`;
+
+            if (status === '待處理') {
+                content += `
+                    <div style="margin-top: 20px">
+                        <button class="action-btn" onclick="processCase('${caseId}')">開始處理</button>
+                    </div>
+                `;
+            } else if (status === '處理中') {
+                content += `
+                    <div style="margin-top: 20px">
+                        <textarea id="processNote" placeholder="請輸入處理說明" style="width: 100%; padding: 10px; margin-bottom: 10px;"></textarea>
+                        <button class="action-btn" onclick="completeCase('${caseId}')">完成處理</button>
+                    </div>
+                `;
+            }
+
+            caseDetail.innerHTML = content;
+            modal.style.display = 'block';
+        }
+    </script>
+</body>
+
+</html>

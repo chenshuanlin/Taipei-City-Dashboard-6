@@ -1,45 +1,49 @@
 <?php
-// 引入資料庫連線檔案
-include('db_connect.php');
+// 資料庫連線
+$servername = "localhost"; // 伺服器名稱
+$username = "root"; // 資料庫使用者名稱
+$password = "ma20040822"; // 資料庫密碼
+$dbname = "TrafficViolation"; // 資料庫名稱
 
-// 檢查是否收到 POST 請求
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // 接收表單資料
-    $name = $_POST['name'];
-    $idNumber = $_POST['idNumber'];
-    $email = $_POST['email'];
-    $phone = $_POST['phone'];
-    $location = $_POST['location'];
-    $violationTime = $_POST['violationTime'];
-    $licensePlate = $_POST['licensePlate'];
-    $violationType = $_POST['violationType'];
-    $description = $_POST['description'];
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-    // 處理上傳照片
-    $photo = null;
-    if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0) {
-        $photo = file_get_contents($_FILES['photo']['tmp_name']); // 將照片轉為二進位格式
-    }
-
-    // 插入資料到資料庫
-    $stmt = $conn->prepare("INSERT INTO `交通違規舉報資料表` (
-        `檢舉人姓名`, `身分證字號`, `電子郵件`, `聯絡電話`, `違規地點`, `違規時間`,
-        `車牌號碼`, `違規項目`, `違規照片`, `違規說明`
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
-    $stmt->bind_param(
-        "sssssssssb",
-        $name, $idNumber, $email, $phone, $location, $violationTime,
-        $licensePlate, $violationType, $photo, $description
-    );
-
-    if ($stmt->execute()) {
-        echo "舉報資料已成功提交！";
-    } else {
-        echo "提交失敗：" . $stmt->error;
-    }
-
-    $stmt->close();
-    $conn->close();
+// 檢查連線
+if ($conn->connect_error) {
+    die("連線失敗：" . $conn->connect_error);
 }
+
+// 接收表單資料
+$name = $_POST['name'];
+$idNumber = $_POST['idNumber'];
+$email = $_POST['email'];
+$phone = $_POST['phone'];
+$location = $_POST['location'];
+$licensePlate = $_POST['licensePlate'];
+$violationTime = $_POST['violationTime'];
+$violationType = $_POST['violationType'];
+$description = $_POST['description'];
+
+// 處理照片上傳
+$targetDir = "uploads/";
+$photoName = basename($_FILES["photo"]["name"]);
+$targetFilePath = $targetDir . $photoName;
+
+if (move_uploaded_file($_FILES["photo"]["tmp_name"], $targetFilePath)) {
+    $photoPath = $targetFilePath;
+} else {
+    die("照片上傳失敗！");
+}
+
+// 插入資料庫
+$sql = "INSERT INTO Reports (name, idNumber, email, phone, location, licensePlate, violationTime, violationType, description, photoPath)
+        VALUES ('$name', '$idNumber', '$email', '$phone', '$location', '$licensePlate', '$violationTime', '$violationType', '$description', '$photoPath')";
+
+if ($conn->query($sql) === TRUE) {
+    echo "資料提交成功！案件編號：" . $conn->insert_id;
+} else {
+    echo "錯誤：" . $sql . "<br>" . $conn->error;
+}
+
+// 關閉連線
+$conn->close();
 ?>

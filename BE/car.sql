@@ -16,6 +16,7 @@ DROP TABLE IF EXISTS 佐理員資料表;
 DROP TABLE IF EXISTS 違規罰單資料表;
 DROP TABLE IF EXISTS 列印檔資料表;
 DROP TABLE IF EXISTS 違規案件資料表;
+DROP TABLE IF EXISTS 交通違規舉報資料表;
 
 CREATE TABLE 車主基本資料表 (
     車主編號 VARCHAR(10) PRIMARY KEY,  
@@ -24,6 +25,37 @@ CREATE TABLE 車主基本資料表 (
     電話號碼 VARCHAR(20),               
     地址 VARCHAR(100)                  
 );
+CREATE TABLE 交通違規舉報資料表 (
+    編號 INT AUTO_INCREMENT PRIMARY KEY,
+    檢舉人姓名 VARCHAR(100),
+    身分證字號 VARCHAR(20),
+    電子郵件 VARCHAR(255),
+    聯絡電話 VARCHAR(15),
+    違規地點 VARCHAR(255),
+    違規時間 DATETIME,
+    車牌號碼 VARCHAR(20),
+    違規項目 VARCHAR(255),
+    違規照片 BLOB COMMENT,
+    違規說明 TEXT COMMENT,
+    建立時間 DATETIME DEFAULT CURRENT_TIMESTAMP ,
+    更新時間 DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新時間'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='交通違規舉報資料表';
+
+CREATE TABLE 車輛違規資料表 (
+    編號 INT AUTO_INCREMENT PRIMARY KEY,  -- 自動遞增主鍵
+    車牌號碼 VARCHAR(20) NOT NULL,        -- 車牌號碼
+    違規日期 DATE NOT NULL,               -- 違規日期
+    違規地點 VARCHAR(255) NOT NULL,       -- 違規地點
+    違規項目 VARCHAR(255) NOT NULL,       -- 違規項目
+    狀態 VARCHAR(10) NOT NULL, -- 違規狀態
+    建立時間 DATETIME DEFAULT CURRENT_TIMESTAMP, -- 紀錄創建時間
+    更新時間 DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- 紀錄更新時間
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='車輛違規紀錄表';
+
+INSERT INTO 車輛違規資料表 (編號, 車牌號碼, 違規日期, 違規地點, 違規項目, 狀態,建立時間,更新時間) VALUES 
+('C001', '123 SKT', '2024/01/02', '台北市文山區萬壽路 50 巷 10 號', '闖紅燈','已繳費', '2019/01/02', '2019/01/02'),
+('C002', 'JRX-4176', '2022/01/02', '台北市文山區萬壽路 50 巷 10 號', '闖紅燈','已繳費', '2019/01/02', '2019/01/02'),
+('C003', 'VVJ-808', '2023/01/02', '台北市文山區萬壽路 50 巷 10 號','闖紅燈','已繳費', '2019/01/02', '2019/01/02');
 
 CREATE TABLE 車輛基本資料表 (
     車輛編號 VARCHAR(10) PRIMARY KEY, 
@@ -64,7 +96,7 @@ CREATE TABLE 違規罰單資料表 (
     違規類型編號 INT,               
     違規地點 VARCHAR(100),            
     違規時間 DATETIME,           
-    處理員編號 VARCHAR(10),       
+    處理人員編號 VARCHAR(10),       
     照相地點 VARCHAR(100),            
     照相地點經度 DECIMAL(10, 6),   
     照相地點緯度 DECIMAL(10, 6),    
@@ -75,7 +107,7 @@ CREATE TABLE 違規罰單資料表 (
     照相機設備編號 VARCHAR(20),    
     FOREIGN KEY (車輛編號) REFERENCES 車輛基本資料表(車輛編號),
     FOREIGN KEY (違規類型編號) REFERENCES 違規類型資料表(違規類型編號),
-    FOREIGN KEY (處理員編號) REFERENCES 執法人員資料表(執法人員編號)
+    FOREIGN KEY (處理人員編號) REFERENCES 執法人員資料表(執法人員編號)
 );
 
 
@@ -234,7 +266,7 @@ INSERT INTO 佐理員資料表 (佐理員編號, 佐理員姓名, 佐理員所�
 ('E005', '吳宗憲', '台北市警察局交通大隊');
 
 INSERT INTO 違規罰單資料表 (
-    罰單編號, 車輛編號, 違規類型編號, 違規地點, 違規時間, 處理員編號, 照相地點, 照相地點經度, 照相地點緯度, 違規照片, 開罰單位, 當地限速, 實際時速,照相機設備編號
+    罰單編號, 車輛編號, 違規類型編號, 違規地點, 違規時間, 執法人員編號, 照相地點, 照相地點經度, 照相地點緯度, 違規照片, 開罰單位, 當地限速, 實際時速,照相機設備編號
 ) VALUES
 ('F001', 'C001', 1, '台北市信義區松高路與基隆路交叉口', '2024-12-01 14:35:00', 'L001', '松高路路口', 121.567894, 25.035123, NULL, '台北市警察局交通大隊', 50, 63, 'CAM001'),
 ('F002', 'C002', 3, '台北市中山區南京東路與復興北路交叉口', '2024-12-02 16:20:00', 'L002', '南京東路路口', 121.544567, 25.052432, NULL, '台北市警察局交通大隊', 60, 78, 'CAM002'),

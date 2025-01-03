@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>交通違規舉報系統</title>
+    <link rel="stylesheet" href="../assets/css/ti.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">交通違規舉報系統</div>
+      <div class="card">
+        <h2 class="form-title">違規舉發單</h2>
+        <form
+          action="submitViolation.jsp"
+          method="post"
+          enctype="multipart/form-data"
+          id="violationForm"
+        >
+          <div class="form-section">
+            <h3 class="section-title">檢舉人資訊</h3>
+            <div class="grid-2">
+              <div class="form-group">
+                <label>姓名：</label>
+                <input
+                  type="text"
+                  name="檢舉人姓名"
+                  class="form-input"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label>身分證字號：</label>
+                <input
+                  type="text"
+                  name="身分證字號"
+                  class="form-input"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label>電子郵件：</label>
+                <input
+                  type="email"
+                  name="電子郵件"
+                  class="form-input"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label>聯絡電話：</label>
+                <input type="tel" name="聯絡電話" class="form-input" required />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3 class="section-title">違規資訊</h3>
+            <div class="grid-2">
+              <div class="form-group">
+                <label>違規地點：</label>
+                <input
+                  type="text"
+                  name="違規地點"
+                  class="form-input"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label>車牌號碼：</label>
+                <input
+                  type="text"
+                  name="車牌號碼"
+                  class="form-input"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label>違規時間：</label>
+                <input
+                  type="datetime-local"
+                  name="違規時間"
+                  class="form-input"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label>違規項目：</label>
+                <input
+                  type="text"
+                  name="違規項目"
+                  class="form-input"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section grid-2">
+            <div>
+              <h3 class="section-title">違規照片上傳</h3>
+              <div class="upload-area">
+                <input
+                  type="file"
+                  id="imageUpload"
+                  name="違規照片"
+                  class="file-input"
+                  accept="image/*"
+                  required
+                />
+                <label for="imageUpload" class="upload-label"
+                  >點擊或拖曳上傳照片</label
+                >
+              </div>
+              <div id="previewArea" class="preview-area"></div>
+            </div>
+            <div>
+              <h3 class="section-title">違規說明</h3>
+              <textarea
+                name="違規說明"
+                class="form-textarea"
+                required
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="button-group">
+            <button type="submit" class="btn btn-submit">提交舉報</button>
+            <button type="reset" class="btn btn-reset">重置</button>
+            <button
+              type="button"
+              class="btn btn-cancel"
+              onclick="window.location.reload()"
+            >
+              取消
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      document
+        .getElementById("violationForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          console.log("表單提交中..."); // 檢查是否觸發提交事件
+
+          const formData = new FormData(this);
+          // 檢查表單數據
+          for (let pair of formData.entries()) {
+            console.log(pair[0] + ": " + pair[1]);
+          }
+
+          try {
+            console.log("開始發送請求");
+            const response = await fetch(
+              "http://localhost:3000/api/violations",
+              {
+                method: "POST",
+                body: formData,
+              }
+            );
+
+            console.log("收到回應:", response);
+            const responseData = await response.json();
+            console.log("回應數據:", responseData);
+
+            if (response.ok) {
+              alert("舉報成功！");
+              showTicket(formData);
+            } else {
+              throw new Error(
+                `提交失敗: ${responseData.message || "未知錯誤"}`
+              );
+            }
+          } catch (error) {
+            console.error("錯誤詳情:", error);
+            alert("提交失敗：" + error.message);
+          }
+        });
+
+      document
+        .getElementById("imageUpload")
+        .addEventListener("change", function (e) {
+          const previewArea = document.getElementById("previewArea");
+          previewArea.innerHTML = "";
+
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+              const img = document.createElement("img");
+              img.src = event.target.result;
+              img.className = "preview-image";
+              previewArea.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+
+      function showTicket(formData) {
+        document.getElementById("violationForm").style.display = "none";
+        const container = document.querySelector(".card");
+        const img = document.querySelector(".preview-image");
+
+        container.innerHTML = `
+				<div class="ticket">
+					<h2 class="title">交通違規舉發單</h2>
+					
+					<div class="section">
+						<h3>檢舉人資訊</h3>
+						<div class="info-item">姓名：${formData.get("檢舉人姓名")}</div>
+						<div class="info-item">身分證字號：${formData.get("身分證字號")}</div>
+						<div class="info-item">電子郵件：${formData.get("電子郵件")}</div>
+						<div class="info-item">聯絡電話：${formData.get("聯絡電話")}</div>
+					</div>
+	
+					<div class="section">
+						<h3>違規資訊</h3>
+						<div class="info-item">違規地點：${formData.get("違規地點")}</div>
+						<div class="info-item">車牌號碼：${formData.get("車牌號碼")}</div>
+						<div class="info-item">違規時間：${formData.get("違規時間")}</div>
+						<div class="info-item">違規項目：${formData.get("違規項目")}</div>
+					</div>
+	
+					<div class="section">
+						<h3>違規說明</h3>
+						<p>${formData.get("違規說明")}</p>
+					</div>
+	
+					<div class="section">
+						<h3>違規照片</h3>
+						${img ? `<img src="${img.src}" style="max-width: 200px; margin: 10px;">` : ""}
+					</div>
+	
+					<div class="section">
+						<div class="info-item">開立日期：${new Date().toLocaleDateString()}</div>
+						<div class="info-item">單號：${Date.now()}</div>
+					</div>
+	
+					<div class="button-group">
+						<button onclick="window.print()" class="btn btn-submit">列印</button>
+						<button onclick="window.location.reload()" class="btn btn-reset">返回</button>
+					</div>
+				</div>
+			`;
+      }
+    </script>
+  </body>
+</html>
