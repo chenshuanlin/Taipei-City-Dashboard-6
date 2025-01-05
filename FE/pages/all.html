@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>交通違規管理系統</title>
+    <link rel="stylesheet" href="../assets/css/all.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
+</head>
+
+<body>
+    <div class="admin-container">
+        <!-- 側邊欄 -->
+        <nav>
+            <div class="logo">
+                <i data-lucide="traffic-cone"></i>
+                <span>後台管理系統</span>
+            </div>
+
+            <div class="nav-links">
+                <a href="../pages/ticket.html" class="nav-item active" data-system="report">
+                    <i data-lucide="file-text"></i>
+                    <span>交通違規舉報系統</span>
+                </a>
+                <a href="../pages/search.html" class="nav-item" data-system="query">
+                    <i data-lucide="search"></i>
+                    <span>車輛違規查詢系統</span>
+                </a>
+                <a href="../pages/lic.html" class="nav-item" data-system="recognition">
+                    <i data-lucide="camera"></i>
+                    <span>車牌辨識系統</span>
+                </a>
+                <a href="../pages/deal.html" class="nav-item" data-system="management">
+                    <i data-lucide="users"></i>
+                    <span>交通局佐理人管理系統</span>
+                </a>
+            </div>
+
+            <!--<div class="user-info">
+                <div class="avatar">
+                    <img src="/api/placeholder/40/40" alt="管理員頭像">
+                </div>
+                <div class="info">
+                    <span class="name">管理員</span>
+                    <span class="role">系統管理者</span>
+                </div>
+            </div>-->
+        </nav>
+
+        <!-- 主要內容區 -->
+        <!--<main class="main-content">
+            <header class="top-bar">
+                <div class="breadcrumb">
+                    <i data-lucide="home"></i>
+                    <span>首頁</span>
+                    <i data-lucide="chevron-right"></i>
+                    <span id="current-system">交通違規舉報系統</span>
+                </div>
+
+                <div class="top-actions">
+                    <button class="notification-btn">
+                        <i data-lucide="bell"></i>
+                        <span class="badge">3</span>
+                    </button>
+                    <button class="settings-btn">
+                        <i data-lucide="settings"></i>
+                    </button>
+                </div>
+            </header>-->
+
+        <!--<div class="content-area">-->
+        <!-- 各系統內容區塊 -->
+        <!--<div class="system-content active" id="report-system">
+                    <h2>交通違規舉報系統</h2>
+                    <iframe src="report.html" frameborder="0"></iframe>
+                </div>
+
+                <div class="system-content" id="query-system">
+                    <h2>車輛違規查詢系統</h2>
+                    <iframe src="query.html" frameborder="0"></iframe>
+                </div>
+
+                <div class="system-content" id="recognition-system">
+                    <h2>車牌辨識系統</h2>
+                    <iframe src="recognition.html" frameborder="0"></iframe>
+                </div>
+
+                <div class="system-content" id="management-system">
+                    <h2>交通局佐理人管理系統</h2>
+                    <iframe src="management.html" frameborder="0"></iframe>
+                </div>
+            </div>-->
+        </main>
+    </div>
+
+    <script>
+        // 初始化 Lucide 圖標
+        lucide.createIcons();
+
+        // 系統切換
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                // 更新導航項目狀態
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                item.classList.add('active');
+
+                // 更新麵包屑
+                document.getElementById('current-system').textContent = item.querySelector('span').textContent;
+
+                // 切換內容區域
+                const systemId = item.getAttribute('data-system');
+                document.querySelectorAll('.system-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(`${systemId}-system`).classList.add('active');
+            });
+        });
+    </script>
+</body>
+
+</html>

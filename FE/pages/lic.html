@@ -12,7 +12,6 @@
 <body>
     <div class="container">
         <div class="flex">
-            <!-- 左側卡片：車牌擷取 -->
             <div class="card card-capture">
                 <div class="card-header">
                     <h2 class="card-title">車牌擷取</h2>
@@ -39,7 +38,7 @@
                                 onchange="handleFileUpload(event)">
                         </div>
 
-                        <div class="manual-input">
+                        <div class="manual-input" id="manualInputSection" style="display: none;">
                             <h3 class="input-title">手動輸入</h3>
                             <div class="input-group">
                                 <input type="text" class="text-input" placeholder="車牌號碼 (例: ABC-1234)" id="plateInput">
@@ -53,7 +52,6 @@
                 </div>
             </div>
 
-            <!-- 右側卡片：辨識結果 -->
             <div class="card card-result">
                 <div class="card-header">
                     <h2 class="card-title">辨識結果</h2>
@@ -69,7 +67,6 @@
         </div>
     </div>
 
-    <!-- 結果範本 -->
     <template id="resultsTemplate">
         <div class="space-y">
             <div class="success-banner">
@@ -90,21 +87,29 @@
                     <p class="result-value timestamp">2024-12-25 14:30:22</p>
                 </div>
             </div>
+
+            <div class="validation-buttons">
+                <button class="btn btn-success" onclick="confirmRecognition()">
+                    <i data-lucide="check"></i>
+                    辨識正確
+                </button>
+                <button class="btn btn-danger" onclick="rejectRecognition()">
+                    <i data-lucide="x"></i>
+                    辨識錯誤
+                </button>
+            </div>
         </div>
     </template>
 
     <script>
-        // 初始化 Lucide 圖標
         lucide.createIcons();
 
-        // 模擬結果數據
         const mockResults = {
             plateNumber: 'ABC-1234',
             confidence: 98.5,
             timestamp: new Date().toLocaleString()
         };
 
-        // 處理文件上傳
         function handleFileUpload(event) {
             const file = event.target.files[0];
             if (file) {
@@ -113,6 +118,9 @@
                     const previewContainer = document.getElementById('previewContainer');
                     previewContainer.innerHTML = `<img src="${e.target.result}" alt="Preview" class="preview-image">`;
 
+                    // 隱藏手動輸入區域
+                    document.getElementById('manualInputSection').style.display = 'none';
+
                     // 模擬辨識過程
                     setTimeout(() => showResults(mockResults), 1000);
                 };
@@ -120,7 +128,6 @@
             }
         }
 
-        // 處理手動輸入
         function handleManualSubmit() {
             const plateInput = document.getElementById('plateInput');
             const plateNumber = plateInput.value.trim();
@@ -131,21 +138,24 @@
                     confidence: '手動輸入',
                     timestamp: new Date().toLocaleString()
                 };
-                showResults(manualResults);
+                showResults(manualResults, true);
             }
         }
 
-        // 顯示結果
-        function showResults(results) {
+        function showResults(results, isManual = false) {
             const container = document.getElementById('resultsContainer');
             const template = document.getElementById('resultsTemplate');
             const clone = template.content.cloneNode(true);
 
-            if (results.confidence === '手動輸入') {
+            if (isManual) {
                 clone.querySelector('.success-title').textContent = '手動輸入完成';
                 clone.querySelector('.success-subtitle').style.display = 'none';
+                // 手動輸入不需要驗證按鈕
+                clone.querySelector('.validation-buttons').style.display = 'none';
             } else {
                 clone.querySelector('.confidence').textContent = results.confidence;
+                // 顯示驗證按鈕
+                clone.querySelector('.validation-buttons').style.display = 'flex';
             }
 
             clone.querySelector('.plate-number').textContent = results.plateNumber;
@@ -154,11 +164,24 @@
             container.innerHTML = '';
             container.appendChild(clone);
 
-            // 重新初始化新添加的圖標
             lucide.createIcons();
         }
 
-        // 上傳區域點擊事件
+        function confirmRecognition() {
+            // 辨識正確，隱藏驗證按鈕
+            const validationButtons = document.querySelector('.validation-buttons');
+            if (validationButtons) {
+                validationButtons.style.display = 'none';
+            }
+        }
+
+        function rejectRecognition() {
+            // 辨識錯誤，顯示手動輸入區域
+            document.getElementById('manualInputSection').style.display = 'block';
+            // 清空結果區域
+            document.getElementById('resultsContainer').innerHTML = '<div class="no-results">請手動輸入正確的車牌號碼</div>';
+        }
+
         document.getElementById('uploadArea').addEventListener('click', function () {
             document.getElementById('fileInput').click();
         });

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>交通違規舉報系統</title>
+    <link rel="stylesheet" href="../assets/css/ti.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">交通違規舉報系統</div>
+        <div class="card">
+            <h2 class="form-title">違規舉發單</h2>
+            <form id="violationForm">
+                <!-- 原有的檢舉人資訊區塊 -->
+                <div class="form-section">
+                    <h3 class="section-title">處理人員資訊</h3>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>處理人員姓名：</label>
+                            <input type="text" name="name" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label>處理人員編號：</label>
+                            <input type="text" name="idNumber" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label>電子郵件：</label>
+                            <input type="email" name="email" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label>聯絡電話：</label>
+                            <input type="tel" name="phone" class="form-input" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 修改後的違規資訊區塊 -->
+                <div class="form-section">
+                    <h3 class="section-title">違規資訊</h3>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>違規地點：</label>
+                            <input type="text" name="location" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label>車牌號碼：</label>
+                            <input type="text" name="licensePlate" class="form-input" required
+                                onchange="fetchVehicleOwner(this.value)">
+                            <div id="ownerInfo" class="owner-info"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>違規時間：</label>
+                            <input type="datetime-local" name="violationTime" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label>違規項目：</label>
+                            <input type="text" name="violationType" class="form-input" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 其餘表單部分保持不變 -->
+                <div class="form-section grid-2">
+                    <div>
+                        <h3 class="section-title">違規照片上傳</h3>
+                        <div class="upload-area">
+                            <input type="file" multiple id="imageUpload" class="file-input" accept="image/*">
+                            <label for="imageUpload" class="upload-label">點擊或拖曳上傳照片</label>
+                        </div>
+                        <div id="previewArea" class="preview-area"></div>
+                    </div>
+                    <div>
+                        <h3 class="section-title">違規說明</h3>
+                        <textarea name="description" class="form-textarea" required></textarea>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn btn-submit">提交並列印</button>
+                    <button type="reset" class="btn btn-reset">重置</button>
+                    <button type="button" class="btn btn-cancel" onclick="window.location.reload()">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let ownerData = null;
+
+        async function fetchVehicleOwner(licensePlate) {
+            try {
+                const response = await fetch(`/api/vehicle-owner/${licensePlate}`);
+                if (response.ok) {
+                    ownerData = await response.json();
+                    document.getElementById('ownerInfo').innerHTML = `
+                        <div class="owner-details">
+                            <p>車主姓名: ${ownerData.name}</p>
+                            <p>聯絡電話: ${ownerData.phone}</p>
+                            <p>註冊地址: ${ownerData.address}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('無法取得車主資料:', error);
+                document.getElementById('ownerInfo').innerHTML = '<p class="error">無法取得車主資料</p>';
+            }
+        }
+
+        document.getElementById('violationForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            generateTicket(formData);
+        });
+
+        document.getElementById('imageUpload').addEventListener('change', function (e) {
+            const previewArea = document.getElementById('previewArea');
+            previewArea.innerHTML = '';
+
+            Array.from(e.target.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    const img = document.createElement('img');
+                    img.src = event.target.result;
+                    img.className = 'preview-image';
+                    previewArea.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        function generateTicket(formData) {
+            document.getElementById('violationForm').style.display = 'none';
+            const container = document.querySelector('.card');
+            const images = document.querySelectorAll('.preview-image');
+            let imagesHTML = '';
+
+            images.forEach(img => {
+                imagesHTML += `<img src="${img.src}" style="max-width: 200px; margin: 10px;">`;
+            });
+
+            // 加入車主資訊到罰單
+            const ownerInfoHTML = ownerData ? `
+                <div class="section">
+                    <h3>車主資訊</h3>
+                    <div class="info-item">車主姓名：${ownerData.name}</div>
+                    <div class="info-item">聯絡電話：${ownerData.phone}</div>
+                    <div class="info-item">註冊地址：${ownerData.address}</div>
+                </div>
+            ` : '';
+
+            container.innerHTML = `
+                <div class="ticket">
+                    <h2 class="title">交通違規舉發單</h2>
+                    
+                    <div class="section">
+                        <h3>檢舉人資訊</h3>
+                        <div class="info-item">姓名：${formData.get('name')}</div>
+                        <div class="info-item">身分證字號：${formData.get('idNumber')}</div>
+                        <div class="info-item">電子郵件：${formData.get('email')}</div>
+                        <div class="info-item">聯絡電話：${formData.get('phone')}</div>
+                    </div>
+
+                    ${ownerInfoHTML}
+
+                    <div class="section">
+                        <h3>違規資訊</h3>
+                        <div class="info-item">違規地點：${formData.get('location')}</div>
+                        <div class="info-item">車牌號碼：${formData.get('licensePlate')}</div>
+                        <div class="info-item">違規時間：${formData.get('violationTime')}</div>
+                        <div class="info-item">違規項目：${formData.get('violationType')}</div>
+                    </div>
+
+                    <div class="section">
+                        <h3>違規說明</h3>
+                        <p>${formData.get('description')}</p>
+                    </div>
+
+                    <div class="section">
+                        <h3>違規照片</h3>
+                        ${imagesHTML}
+                    </div>
+
+                    <div class="section">
+                        <div class="info-item">開立日期：${new Date().toLocaleDateString()}</div>
+                        <div class="info-item">單號：${Date.now()}</div>
+                    </div>
+
+                    <div class="button-group">
+                        <button onclick="window.print()" class="btn btn-submit">列印</button>
+                        <button onclick="window.location.reload()" class="btn btn-reset">返回</button>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+
+</html>

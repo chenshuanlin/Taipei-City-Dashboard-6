@@ -25,6 +25,11 @@
                     <h1>案件管理</h1>
                 </div>
 
+                <div class="nav-buttons">
+                    <a href="../pages/all.html" class="nav-btn home-btn">回到首頁</a>
+                    <a href="../pages/login.html" class="nav-btn logout-btn">登出</a>
+                </div>
+
                 <div class="status-cards">
                     <div class="card">
                         <div class="card-title">待處理案件</div>
@@ -183,36 +188,75 @@
             const modal = document.getElementById('caseModal');
             const caseDetail = document.getElementById('caseDetail');
 
-            // 根據案件狀態顯示不同內容
             let content = `
-                <p><strong>案件編號：</strong>${caseId}</p>
-                <p><strong>案件狀態：</strong>${status}</p>
-                <p><strong>檢舉人：</strong>王小明</p>
-                <p><strong>聯絡電話：</strong>0912-345-678</p>
-                <p><strong>違規詳情：</strong>車輛停放於紅線區域，阻礙交通</p>
-                <p><strong>照片證據：</strong><img src="/api/placeholder/400/300" alt="違規照片"></p>
-            `;
-
-            if (status === '待處理') {
-                content += `
-                    <div style="margin-top: 20px">
-                        <button class="action-btn" onclick="processCase('${caseId}')">開始處理</button>
-                    </div>
-                `;
-            } else if (status === '處理中') {
-                content += `
-                    <div style="margin-top: 20px">
-                        <textarea id="processNote" placeholder="請輸入處理說明" style="width: 100%; padding: 10px; margin-bottom: 10px;"></textarea>
-                        <button class="action-btn" onclick="completeCase('${caseId}')">完成處理</button>
-                    </div>
-                `;
-            }
+        <p><strong>案件編號：</strong>${caseId}</p>
+        <p><strong>案件狀態：</strong>${status}</p>
+        <p><strong>檢舉人：</strong>王小明</p>
+        <p><strong>聯絡電話：</strong>0912-345-678</p>
+        <p><strong>違規詳情：</strong>車輛停放於紅線區域，阻礙交通</p>
+        <p><strong>照片證據：</strong><img src="/api/placeholder/400/300" alt="違規照片"></p>
+        <div style="margin-top: 20px">
+            ${getActionButton(caseId, status)}
+        </div>
+    `;
 
             caseDetail.innerHTML = content;
             modal.style.display = 'block';
         }
 
-        // 新增完成處理函數
+        function getActionButton(caseId, status) {
+            switch (status) {
+                case '待處理':
+                    return `<button class="action-btn" onclick="processCase('${caseId}')">開始處理</button>`;
+                case '處理中':
+                    return `
+                <textarea id="processNote" placeholder="請輸入處理說明" style="width: 100%; padding: 10px; margin-bottom: 10px;"></textarea>
+                <button class="action-btn" onclick="completeCase('${caseId}')">完成處理</button>
+            `;
+                default:
+                    return '';
+            }
+        }
+
+        function updateCaseStatus(caseId, newStatus, buttonText) {
+            const caseElements = document.querySelectorAll('.list-item');
+            caseElements.forEach(item => {
+                if (item.firstElementChild.textContent.includes(caseId)) {
+                    const statusElement = item.children[4].firstElementChild;
+                    statusElement.textContent = newStatus;
+                    statusElement.className = `status-badge status-${newStatus === '處理中' ? 'processing' : 'completed'}`;
+
+                    const actionButton = item.querySelector('.action-btn');
+                    actionButton.textContent = buttonText;
+                    actionButton.onclick = () => showCaseDetail(caseId, newStatus);
+                }
+            });
+        }
+
+        function updateStatusCounts(fromStatus, toStatus) {
+            const statusMap = {
+                '待處理': 0,
+                '處理中': 1,
+                '已處理': 2
+            };
+
+            const cards = document.querySelectorAll('.status-cards .card .card-value');
+            if (fromStatus) {
+                cards[statusMap[fromStatus]].textContent =
+                    parseInt(cards[statusMap[fromStatus]].textContent) - 1;
+            }
+            if (toStatus) {
+                cards[statusMap[toStatus]].textContent =
+                    parseInt(cards[statusMap[toStatus]].textContent) + 1;
+            }
+        }
+
+        function processCase(caseId) {
+            updateCaseStatus(caseId, '處理中', '查看');
+            updateStatusCounts('待處理', '處理中');
+            closeModal();
+        }
+
         function completeCase(caseId) {
             const processNote = document.getElementById('processNote').value;
             if (!processNote.trim()) {
@@ -220,23 +264,84 @@
                 return;
             }
 
-            // 更新案件狀態顯示
+            updateCaseStatus(caseId, '已處理', '查看');
+            updateStatusCounts('處理中', '已處理');
+            closeModal();
+        }
+
+        function closeModal() {
+            document.getElementById('caseModal').style.display = 'none';
+        }
+
+        // 新增完成處理函數
+        function processCase(caseId) {
             const caseElements = document.querySelectorAll('.list-item');
             caseElements.forEach(item => {
-                if (item.firstElementChild.textContent === caseId) {
+                if (item.firstElementChild.textContent.includes(caseId)) {
+                    // 更新狀態欄位
+                    const statusElement = item.children[4].firstElementChild;
+                    statusElement.textContent = '處理中';
+                    statusElement.className = 'status-badge status-processing';
+
+                    // 更新操作按鈕
+                    const actionButton = item.children[5].firstElementChild;
+                    actionButton.textContent = '查看';
+                    actionButton.onclick = () => showCaseDetail(caseId, '處理中');
+
+                    // 更新統計數據
+                    updateStatusCount('pending', 'processing');
+                }
+            });
+            closeModal();
+            alert(`案件 ${caseId} 已開始處理`);
+        }
+
+        function completeCase(caseId) {
+            const processNote = document.getElementById('processNote').value;
+            if (!processNote.trim()) {
+                alert('請填寫處理說明');
+                return;
+            }
+
+            const caseElements = document.querySelectorAll('.list-item');
+            caseElements.forEach(item => {
+                if (item.firstElementChild.textContent.includes(caseId)) {
+                    // 更新狀態欄位
                     const statusElement = item.children[4].firstElementChild;
                     statusElement.textContent = '已處理';
                     statusElement.className = 'status-badge status-completed';
 
-                    // 更新按鈕
-                    const actionButton = item.querySelector('.action-btn');
+                    // 更新操作按鈕
+                    const actionButton = item.children[5].firstElementChild;
                     actionButton.textContent = '查看';
                     actionButton.onclick = () => showCaseDetail(caseId, '已處理');
+
+                    // 更新統計數據
+                    updateStatusCount('processing', 'completed');
                 }
             });
-
-            alert('案件處理完成');
             closeModal();
+            alert('案件處理完成');
+        }
+
+        function updateStatusCount(fromStatus, toStatus) {
+            const statusMap = {
+                'pending': 0,
+                'processing': 1,
+                'completed': 2
+            };
+
+            const cards = document.querySelectorAll('.status-cards .card');
+            if (fromStatus) {
+                const fromCard = cards[statusMap[fromStatus]];
+                fromCard.querySelector('.card-value').textContent =
+                    parseInt(fromCard.querySelector('.card-value').textContent) - 1;
+            }
+            if (toStatus) {
+                const toCard = cards[statusMap[toStatus]];
+                toCard.querySelector('.card-value').textContent =
+                    parseInt(toCard.querySelector('.card-value').textContent) + 1;
+            }
         }
 
         // 關閉模態框

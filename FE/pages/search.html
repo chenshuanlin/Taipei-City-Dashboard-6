@@ -1,76 +1,75 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>車輛違規查詢系統</title>
-    <link rel="stylesheet" href="../assets/css/search.css" />
-  </head>
 
-  <body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>車輛違規查詢系統</title>
+    <link rel="stylesheet" href="../assets/css/search.css">
+</head>
+
+<body>
     <div class="container">
-      <div class="header">
-        <h1>車輛違規查詢系統</h1>
-        <!--<div class="user-info">
+        <div class="header">
+            <h1>車輛違規查詢系統</h1>
+            <!--<div class="user-info">
                 歡迎，王小明
                 <button class="logout-btn">登出</button>
             </div>-->
-      </div>
-
-      <div class="search-section">
-        <div class="search-box">
-          <input
-            type="text"
-            class="search-input"
-            placeholder="請輸入車牌號碼"
-            id="plateNumber"
-          />
-          <button class="search-btn" onclick="searchViolation()">查詢</button>
         </div>
 
-        <div class="result-section">
-          <div class="violation-list">
-            <div class="violation-header">
-              <div>編號</div>
-              <div>車牌號碼</div>
-              <div>違規日期</div>
-              <div>違規地點</div>
-              <div>違規項目</div>
-              <div>狀態</div>
+        <div class="search-section">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="請輸入車牌號碼" id="plateNumber">
+                <button class="search-btn" onclick="searchViolation()">查詢</button>
             </div>
 
-            <div class="violation-item">
-              <div>C002</div>
-              <div>JRX-4176</div>
-              <div>2022/01/02</div>
-              <div>台北市文山區萬壽路 50 巷 10 號</div>
-              <div>超速</div>
-              <div class="status-unpaid">未繳費</div>
+            <div class="result-section">
+                <div class="violation-list">
+                    <div class="violation-header">
+                        <div>編號</div>
+                        <div>車牌號碼</div>
+                        <div>違規日期</div>
+                        <div>違規地點</div>
+                        <div>違規項目</div>
+                        <div>狀態</div>
+                    </div>
+
+                    <div class="violation-item">
+                        <div>C002</div>
+                        <div>ABC-1234</div>
+                        <div>2022/01/02</div>
+                        <div>台北市文山區萬壽路 50 巷 10 號</div>
+                        <div>超速</div>
+                        <div class="status-unpaid">未繳費</div>
+                    </div>
+                </div>
             </div>
-          </div>
+
+            <div class="no-result">
+                查無此車牌號碼的違規紀錄
+            </div>
         </div>
-
-        <div class="no-result">查無此車牌號碼的違規紀錄</div>
-      </div>
     </div>
 
     <script>
-      function searchViolation() {
-        const plateNumber = document.getElementById("plateNumber").value;
-        const resultSection = document.querySelector(".result-section");
-        const noResult = document.querySelector(".no-result");
+        function searchViolation() {
+            const plateNumber = document.getElementById('plateNumber').value;
+            const resultSection = document.querySelector('.result-section');
+            const noResult = document.querySelector('.no-result');
 
-        if (plateNumber) {
-          // 模擬API查詢
-          if (plateNumber === "JRX-4176") {
-            resultSection.classList.add("show");
-            noResult.style.display = "none";
-          } else {
-            resultSection.classList.remove("show");
-            noResult.style.display = "block";
-          }
+            if (plateNumber) {
+                // 模擬API查詢
+                if (plateNumber === 'ABC-1234') {
+                    resultSection.classList.add('show');
+                    noResult.style.display = 'none';
+                } else {
+                    resultSection.classList.remove('show');
+                    noResult.style.display = 'block';
+                }
+            }
         }
-      }
     </script>
-  </body>
+</body>
+
 </html>

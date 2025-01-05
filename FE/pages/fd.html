@@ -1,187 +1,71 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh">
 
 <head>
     <meta charset="UTF-8">
-    <title>違規罰單</title>
-    <style>
-        body {
-            font-family: "Microsoft JhengHei", sans-serif;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .ticket-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            border: 1px solid #000;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .ticket-info {
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: inline-block;
-            width: 120px;
-            font-weight: bold;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 200px;
-            padding: 5px;
-        }
-
-        .signature-area {
-            margin-top: 30px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .signature-box {
-            border-top: 1px solid #000;
-            width: 200px;
-            padding-top: 5px;
-            text-align: center;
-        }
-
-        .button-group {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .button-group button {
-            padding: 10px 20px;
-            margin: 0 10px;
-            cursor: pointer;
-        }
-
-        @media print {
-            .button-group {
-                display: none;
-            }
-
-            body {
-                padding: 0;
-            }
-
-            .ticket-container {
-                border: none;
-            }
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>罰單</title>
+    <link rel="stylesheet" href="../assets/css/fd.css">
 </head>
 
 <body>
-    <div class="ticket-container">
+    <div class="ticket">
         <div class="header">
-            <h1>違規罰單</h1>
-            <p>單號：<span id="ticketNumber"></span></p>
-            <p>開立日期：<span id="currentDate"></span></p>
-        </div>
-
-        <div class="ticket-info">
-            <div class="form-group">
-                <label>違規人姓名：</label>
-                <input type="text" id="name" required>
+            <div class="left-boxes">
+                <div class="checkbox-container">
+                    違規舉發通知
+                </div>
+                <div class="checkbox-container">
+                    ☑ 汽車駕駛人
+                </div>
             </div>
-
-            <div class="form-group">
-                <label>身分證字號：</label>
-                <input type="text" id="idNumber" required>
-            </div>
-
-            <div class="form-group">
-                <label>違規地點：</label>
-                <input type="text" id="location" required>
-            </div>
-
-            <div class="form-group">
-                <label>違規項目：</label>
-                <select id="violationType" required>
-                    <option value="">請選擇違規項目</option>
-                    <option value="超速">超速</option>
-                    <option value="闖紅燈">闖紅燈</option>
-                    <option value="未戴安全帽">未戴安全帽</option>
-                    <option value="違規停車">違規停車</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>罰款金額：</label>
-                <input type="number" id="fineAmount" required>
-            </div>
-
-            <div class="form-group">
-                <label>備註：</label>
-                <input type="text" id="remarks">
+            <div class="title">違反道路交通管理事件通知單</div>
+            <div class="right-section">
+                <div class="serial-number">
+                    字號：Z2
+                </div>
+                <div class="barcode"></div>
             </div>
         </div>
 
-        <div class="signature-area">
-            <div class="signature-box">
-                <p>開立人員簽名</p>
-            </div>
-            <div class="signature-box">
-                <p>違規人簽名</p>
-            </div>
+        <div class="form-grid">
+            <div class="grid-label">車主姓名</div>
+            <div class="grid-value" style="grid-column: span 2;"></div>
+            <div class="grid-label">車牌號碼</div>
+            <div class="grid-value" style="grid-column: span 2;"></div>
+
+            <div class="grid-label">違規地址</div>
+            <div class="grid-value" style="grid-column: span 5;"></div>
+
+            <div class="grid-label">違規時間</div>
+            <div class="grid-value" style="grid-column: span 5;"></div>
+
+            <div class="grid-label">違規事由</div>
+            <div class="grid-value" style="grid-column: span 5;"></div>
+
+            <div class="grid-label">罰鍰金額</div>
+            <div class="grid-value" style="grid-column: span 5;"></div>
+
+            <div class="grid-label">舉發單位</div>
+            <div class="grid-value" style="grid-column: span 5;"></div>
         </div>
 
-        <div class="button-group">
-            <button onclick="generateTicketNumber()">產生單號</button>
-            <button onclick="window.print()">列印罰單</button>
-            <button onclick="resetForm()">重置表單</button>
+        <div class="notes-section">
+            注意事項：<br>
+            1.本單經勾記「得採網際網路、語音轉帳、郵政或向受委託代收處所繳納罰鍰」者，請依本單所列印之到期繳納。<br>
+            2.本單經勾記「須至應到案處所接受裁決」者，須依應到案日期前，攜帶本通知單及駕駛人駕照、行車執照、身分證明文件至指定處所辦理。<br>
+            3.被通知人認為舉發之違規事件與事實不符者，應於通知單收受日期起七日內，檢具相關證據及足資辨識之通知。<br>
+            4.應到案期限末日為星期六、日、國定假日或其他休息日時，以休息日之次日代之。<br>
+            5.不服舉發事實，應於接獲本單30日內，向處罰機關提出申訴<br>
+        </div>
+
+        <div class="footer">
+            <div>中華民國 年 月 日</div>
+            <div class="stamp-box">
+                <a href="../pages/stamp.html">機關戳章</a>
+            </div>
         </div>
     </div>
-
-    <script>
-        // 設置當前日期
-        function setCurrentDate() {
-            const now = new Date();
-            const dateStr = now.getFullYear() + '/' +
-                (now.getMonth() + 1).toString().padStart(2, '0') + '/' +
-                now.getDate().toString().padStart(2, '0');
-            document.getElementById('currentDate').textContent = dateStr;
-        }
-
-        // 產生罰單編號
-        function generateTicketNumber() {
-            const prefix = 'TKT';
-            const timestamp = Date.now().toString().slice(-6);
-            const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-            const ticketNumber = `${prefix}${timestamp}${random}`;
-            document.getElementById('ticketNumber').textContent = ticketNumber;
-        }
-
-        // 重置表單
-        function resetForm() {
-            document.getElementById('name').value = '';
-            document.getElementById('idNumber').value = '';
-            document.getElementById('location').value = '';
-            document.getElementById('violationType').value = '';
-            document.getElementById('fineAmount').value = '';
-            document.getElementById('remarks').value = '';
-            document.getElementById('ticketNumber').textContent = '';
-            setCurrentDate();
-        }
-
-        // 頁面載入時初始化
-        window.onload = function () {
-            setCurrentDate();
-            generateTicketNumber();
-        };
-    </script>
 </body>
 
 </html>
