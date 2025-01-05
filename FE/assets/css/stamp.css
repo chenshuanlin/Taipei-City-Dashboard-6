@@ -1,0 +1,41 @@
+.stamp-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  .stamp {
+    width: 200px;
+    height: 120px;
+    border: 4px double #ff0000;
+    border-radius: 100px/60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #ff0000;
+    font-family: "標楷體", DFKai-SB, BiauKai, serif;
+    position: relative;
+  }
+  
+  .stamp-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .stamp-subtitle {
+    font-size: 16px;
+  }
+  
+  .stamp-border {
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border: 2px solid #ff0000;
+    border-radius: 102px/62px;
+    pointer-events: none;
+  }

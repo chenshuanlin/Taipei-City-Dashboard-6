@@ -1,146 +1,148 @@
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Microsoft JhengHei", sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Microsoft JhengHei", sans-serif;
 }
 
 body {
-  background-color: #f5f5f5;
-  padding: 20px;
-  min-height: 100vh;
+    background-color: #f5f5f5;
+    padding: 20px;
+    min-height: 100vh;
 }
 
 .container {
-  max-width: 1000px;
-  margin: 0 auto;
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
 .header {
-  background-color: #1a73e8;
-  color: white;
-  padding: 20px;
-  border-radius: 10px 10px 0 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    background-color: #1a73e8;
+    color: white;
+    padding: 20px;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .user-info {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 .logout-btn {
-  background: transparent;
-  border: 1px solid white;
-  color: white;
-  padding: 5px 15px;
-  border-radius: 5px;
-  cursor: pointer;
+    background: transparent;
+    border: 1px solid white;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 .search-section {
-  background-color: white;
-  padding: 30px;
-  border-radius: 0 0 10px 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    padding: 30px;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .search-box {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 30px;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
 }
 
 .search-input {
-  flex: 1;
-  padding: 12px;
-  border: 2px solid #ddd;
-  border-radius: 5px;
-  font-size: 16px;
+    flex: 1;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
 }
 
 .search-btn {
-  padding: 12px 30px;
-  background-color: #1a73e8;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
+    padding: 12px 30px;
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
 }
 
 .result-section {
-  display: none;
+    display: none;
 }
 
 .result-section.show {
-  display: block;
+    display: block;
 }
 
 .no-result {
-  text-align: center;
-  padding: 50px;
-  color: #666;
-  font-size: 18px;
-  display: none;
+    text-align: center;
+    padding: 50px;
+    color: #666;
+    font-size: 18px;
+    display: none;
 }
 
 .violation-list {
-  border: 1px solid #ddd;
-  border-radius: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
 }
 
 .violation-header {
-  display: grid; /* 改為使用 Grid 布局 */
-  grid-template-columns: 100px 150px 150px 250px 150px 100px; /* 調整每一列的寬度 */
-  gap: 8px; /* 每個區域之間的間距 */
-  background-color: #f8f9fa;
-  padding: 15px;
-  font-weight: bold;
-  text-align: center; /* 置中標題文字 */
-  border-bottom: 1px solid #ddd; /* 加上底線以區分表頭 */
-}
-
-.violation-item {
-  display: grid; /* 與表頭保持一致 */
-  grid-template-columns: 100px 150px 150px 250px 150px 100px; /* 與表頭相同的設定 */
-  gap: 8px;
-  padding: 15px;
-  text-align: center; /* 置中文字內容 */
-  border-bottom: 1px solid #ddd; /* 每列之間的分隔線 */
-}
+    display: grid; /* 改為使用 Grid 布局 */
+    grid-template-columns: 100px 150px 150px 250px 150px 100px; /* 調整每一列的寬度 */
+    gap: 8px; /* 每個區域之間的間距 */
+    background-color: #f8f9fa;
+    padding: 15px;
+    font-weight: bold;
+    text-align: center; /* 置中標題文字 */
+    border-bottom: 1px solid #ddd; /* 加上底線以區分表頭 */
+  }
+  
+  .violation-item {
+    display: grid; /* 與表頭保持一致 */
+    grid-template-columns: 100px 150px 150px 250px 150px 100px; /* 與表頭相同的設定 */
+    gap: 8px;
+    padding: 15px;
+    text-align: center; /* 置中文字內容 */
+    border-bottom: 1px solid #ddd; /* 每列之間的分隔線 */
+  }
+  
 
 .violation-item:hover {
-  background-color: #f8f9fa;
+    background-color: #f8f9fa;
 }
 
 .status-unpaid {
-  color: #dc3545;
-  font-weight: bold;
+    color: #dc3545;
+    font-weight: bold;
 }
 
 .status-paid {
-  color: #28a745;
+    color: #28a745;
 }
 
 .details-btn {
-  padding: 5px 15px;
-  background-color: #1a73e8;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+    padding: 5px 15px;
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 @media (max-width: 768px) {
-  .violation-header,
-  .violation-item {
-    grid-template-columns: 1fr 1fr;
-  }
 
-  .violation-header div,
-  .violation-item div {
-    padding: 5px 0;
-  }
+    .violation-header,
+    .violation-item {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .violation-header div,
+    .violation-item div {
+        padding: 5px 0;
+    }
 }
