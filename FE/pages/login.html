@@ -1,32 +1,44 @@
 <!DOCTYPE html>
 <html lang="zh">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>登入/註冊</title>
-    <link rel="stylesheet" href="../assets/css/log.css">
-</head>
+    <link rel="stylesheet" href="../assets/css/log.css" />
+  </head>
 
-<body>
+  <body>
     <!-- 登入頁面 -->
     <div class="container" id="loginPage">
-        <h2 class="form-title">登入</h2>
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="loginEmail">電子郵件</label>
-                <input type="email" id="loginEmail" required>
-            </div>
-            <div class="form-group">
-                <label for="loginPassword">密碼</label>
-                <input type="password" id="loginPassword" required>
-            </div>
-            <button type="submit"> <a href="../pages/deal.html">登入</a></button>
-            <!--<div class="switch-link">
-                還沒有帳號？<a href="../pages/regesiter.html">立即註冊</a>
-            </div>-->
-        </form>
+      <h2 class="form-title">登入</h2>
+      <form id="loginForm" method="post" action="login.jsp">
+        <div class="form-group">
+          <label for="loginID">帳號</label>
+          <input type="text" id="loginID" name="assistantId" required />
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">密碼</label>
+          <input type="password" id="loginPassword" name="password" required />
+        </div>
+        <button type="submit">登入</button>
+      </form>
     </div>
-</body>
 
+    <script>
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", function (event) {
+          const loginID = document.getElementById("loginID").value.trim();
+          const password = document
+            .getElementById("loginPassword")
+            .value.trim();
+
+          if (!loginID || !password) {
+            event.preventDefault(); // 阻止表單提交
+            alert("請填寫所有欄位！");
+            return;
+          }
+        });
+    </script>
+  </body>
 </html>

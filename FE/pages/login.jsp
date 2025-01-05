@@ -13,7 +13,7 @@ pageEncoding="UTF-8"%> <%@ page import="java.sql.*" %>
       <h2 class="form-title">登入</h2>
       <form id="loginForm" method="post" action="login.jsp">
         <div class="form-group">
-          <label for="loginEmail">助理ID</label>
+          <label for="loginEmail">帳號</label>
           <input type="text" id="loginEmail" name="assistantId" required />
         </div>
         <div class="form-group">
@@ -24,30 +24,28 @@ pageEncoding="UTF-8"%> <%@ page import="java.sql.*" %>
       </form>
     </div>
 
-    <% // 檢查是否有表單提交 if (request.getMethod().equals("POST")) { String
-    assistantId = request.getParameter("assistantId"); String password =
+    <% if ("POST".equalsIgnoreCase(request.getMethod())) { String assistantId =
+    request.getParameter("assistantId"); String password =
     request.getParameter("password"); Connection conn = null; PreparedStatement
-    pstmt = null; ResultSet rs = null; try { // 資料庫連接設定
+    pstmt = null; ResultSet rs = null; try {
     Class.forName("com.mysql.jdbc.Driver"); String url =
     "jdbc:mysql://localhost:3306/SpeedingViolationSystem?useUnicode=true&characterEncoding=utf8";
     String dbUser = "root"; String dbPassword = "ma20040822"; conn =
-    DriverManager.getConnection(url, dbUser, dbPassword); // 準備SQL查詢 String
-    sql = "SELECT * FROM AssistantInfo WHERE AssistantID = ? AND Password = ?";
-    pstmt = conn.prepareStatement(sql); pstmt.setString(1, assistantId);
-    pstmt.setString(2, password); rs = pstmt.executeQuery(); if (rs.next()) { //
-    登入成功 session.setAttribute("assistantId", assistantId);
-    response.sendRedirect("../pages/deal.html"); } else { // 登入失敗
-    out.println("
+    DriverManager.getConnection(url, dbUser, dbPassword); String sqlQuery =
+    "SELECT * FROM AssistantInfo WHERE AssistantID = ? AND Password = ?"; pstmt
+    = conn.prepareStatement(sqlQuery); pstmt.setString(1, assistantId);
+    pstmt.setString(2, password); rs = pstmt.executeQuery(); if (rs.next()) {
+    session.setAttribute("assistantId", assistantId);
+    response.sendRedirect("../pages/deal.jsp"); } else { %>
     <script>
-      alert("登入失敗！請檢查您的助理ID和密碼。");
+      alert("登入失敗！請檢查您的帳號和密碼。");
     </script>
-    "); } } catch (Exception e) { out.println("
+    <% } } catch (Exception e) { %>
     <script>
-      alert('系統錯誤：" + e.getMessage() + "');
+      alert("系統錯誤：<%= e.getMessage() %>");
     </script>
-    "); } finally { // 關閉資料庫連接 if (rs != null) try { rs.close(); } catch
-    (SQLException e) { } if (pstmt != null) try { pstmt.close(); } catch
-    (SQLException e) { } if (conn != null) try { conn.close(); } catch
-    (SQLException e) { } } } %>
+    <% } finally { try { if (rs != null) rs.close(); } catch (SQLException e) {
+    } try { if (pstmt != null) pstmt.close(); } catch (SQLException e) { } try {
+    if (conn != null) conn.close(); } catch (SQLException e) { } } } %>
   </body>
 </html>
