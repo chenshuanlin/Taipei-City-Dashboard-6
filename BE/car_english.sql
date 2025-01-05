@@ -1,21 +1,19 @@
--- Create database
-CREATE DATABASE IF NOT EXISTS SpeedingTicketSystem
+CREATE DATABASE IF NOT EXISTS SpeedingViolationSystem
 CHARACTER SET utf8mb4
 COLLATE utf8mb4_unicode_ci;
 
-USE SpeedingTicketSystem;
+USE SpeedingViolationSystem;
 
 SET foreign_key_checks = 0;
 
-DROP TABLE IF EXISTS OwnerInfo;
-DROP TABLE IF EXISTS VehicleInfo;
-DROP TABLE IF EXISTS ViolationTypes;
-DROP TABLE IF EXISTS EnforcementOfficers;
-DROP TABLE IF EXISTS Assistants;
-DROP TABLE IF EXISTS ViolationTickets;
-DROP TABLE IF EXISTS PrintRecords;
-DROP TABLE IF EXISTS ViolationCases;
-DROP TABLE IF EXISTS TrafficViolationReports;
+DROP TABLE IF EXISTS OwnerBasicInfo;
+DROP TABLE IF EXISTS VehicleBasicInfo;
+DROP TABLE IF EXISTS ViolationTypeInfo;
+DROP TABLE IF EXISTS EnforcementOfficerInfo;
+DROP TABLE IF EXISTS AssistantInfo;
+DROP TABLE IF EXISTS ViolationTicketInfo;
+DROP TABLE IF EXISTS PrintFileInfo;
+DROP TABLE IF EXISTS ViolationCaseInfo;
 
 CREATE TABLE OwnerBasicInfo (
     OwnerID VARCHAR(10) PRIMARY KEY,  
@@ -25,39 +23,23 @@ CREATE TABLE OwnerBasicInfo (
     Address VARCHAR(100)             
 );
 
-CREATE TABLE TrafficViolationReports (
-    ReportID INT AUTO_INCREMENT PRIMARY KEY,
-    ReporterName VARCHAR(100),
-    IDNumber VARCHAR(20),
-    Email VARCHAR(255),
-    ContactNumber VARCHAR(15),
-    ViolationLocation VARCHAR(255),
-    ViolationTime TIME,
-    LicensePlate VARCHAR(20),
-    ViolationItem VARCHAR(255),
-    ViolationPhoto BLOB COMMENT 'Violation Photo',
-    ViolationDescription TEXT COMMENT 'Violation Description',
-    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-    UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Updated Time'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Traffic Violation Reports';
+CREATE TABLE TrafficViolationReport (
+    ReportID INT AUTO_INCREMENT PRIMARY KEY COMMENT 'Unique identifier',
+    ReporterName VARCHAR(100) COMMENT 'Name of the reporter',
+    IDNumber VARCHAR(20) COMMENT 'ID number',
+    Email VARCHAR(255) COMMENT 'Email address',
+    ContactNumber VARCHAR(15) COMMENT 'Contact number',
+    ViolationLocation VARCHAR(255) COMMENT 'Location of the violation',
+    ViolationTime DATETIME COMMENT 'Time of the violation',
+    LicensePlate VARCHAR(20) COMMENT 'License plate number',
+    ViolationDetails VARCHAR(255) COMMENT 'Violation details',
+    ViolationPhoto BLOB COMMENT 'Violation photo',
+    ViolationDescription TEXT COMMENT 'Description of the violation',
+    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Creation time',
+    UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Update time'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Traffic Violation Report';
 
-CREATE TABLE VehicleViolationRecords (
-    RecordID INT AUTO_INCREMENT PRIMARY KEY,
-    LicensePlate VARCHAR(20) NOT NULL,
-    ViolationDate DATE NOT NULL,
-    ViolationLocation VARCHAR(255) NOT NULL,
-    ViolationItem VARCHAR(255) NOT NULL,
-    Status VARCHAR(10) NOT NULL,
-    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-    UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Vehicle Violation Records';
-
-INSERT INTO VehicleViolationRecords (RecordID, LicensePlate, ViolationDate, ViolationLocation, ViolationItem, Status, CreatedAt, UpdatedAt) VALUES 
-(1, '123 SKT', '2019-01-02', 'Wanshou Rd. Lane 50, No. 10, Wenshan District, Taipei City', 'Red Light Violation', 'Paid', '2019-01-02', '2019-01-02'),
-(2, 'JRX-4176', '2022-01-02', 'Wanshou Rd. Lane 50, No. 10, Wenshan District, Taipei City', 'Red Light Violation', 'Paid', '2019-01-02', '2019-01-02'),
-(3, 'VVJ-808', '2023-01-02', 'Wanshou Rd. Lane 50, No. 10, Wenshan District, Taipei City', 'Red Light Violation', 'Paid', '2019-01-02', '2019-01-02');
-
-CREATE TABLE VehicleInfo (
+CREATE TABLE VehicleBasicInfo (
     VehicleID VARCHAR(10) PRIMARY KEY, 
     LicensePlate VARCHAR(10),            
     OwnerID VARCHAR(10),                
@@ -68,7 +50,7 @@ CREATE TABLE VehicleInfo (
     FOREIGN KEY (OwnerID) REFERENCES OwnerBasicInfo(OwnerID)
 );
 
-CREATE TABLE ViolationTypes (
+CREATE TABLE ViolationTypeInfo (
     ViolationTypeID INT PRIMARY KEY AUTO_INCREMENT,  
     ViolationName VARCHAR(100),                     
     ViolationDescription TEXT,                      
@@ -76,7 +58,7 @@ CREATE TABLE ViolationTypes (
     FineAmount DECIMAL(10, 2)                       
 );
 
-CREATE TABLE EnforcementOfficers (
+CREATE TABLE EnforcementOfficerInfo (
     OfficerID VARCHAR(10) PRIMARY KEY,
 	Password VARCHAR(255) NOT NULL,
     OfficerName VARCHAR(50),
@@ -112,19 +94,24 @@ CREATE TABLE ViolationTicketInfo (
 );
 
 CREATE TABLE ViolationCaseInfo (
-    CaseID VARCHAR(20) PRIMARY KEY,  
-    VehicleID VARCHAR(10),           
-    ViolationTypeID INT,             
-    ViolationLocation VARCHAR(100),  
-    ViolationTime DATETIME,          
-    AssistantID VARCHAR(10),         
-    TicketID VARCHAR(20),
-    CaseDescription TEXT,
+    CaseID VARCHAR(20) PRIMARY KEY,                 -- 案件編號
+    LicensePlate VARCHAR(10),                      -- 車牌號碼
+    ViolationDate DATE,                            -- 違規日期
+    ViolationLocation VARCHAR(100),               -- 違規地點
+    ViolationType VARCHAR(50),                    -- 違規項目
+    Status VARCHAR(20),                           -- 案件狀態 (英文)
+    ViolationTime DATETIME,                       -- 違規時間 (如需要精確到時間)
+    CaseDescription TEXT,                         -- 案件描述 (若需額外說明)
+    ViolationTypeID INT,                          -- 外鍵，參考違規類型表
+    VehicleID INT,                                -- 外鍵，參考車輛基本信息
+    AssistantID INT,                              -- 外鍵，參考協助人員信息
+    TicketID INT,                                 -- 外鍵，參考罰單信息
     FOREIGN KEY (VehicleID) REFERENCES VehicleBasicInfo(VehicleID),
     FOREIGN KEY (ViolationTypeID) REFERENCES ViolationTypeInfo(ViolationTypeID),
     FOREIGN KEY (AssistantID) REFERENCES AssistantInfo(AssistantID),
     FOREIGN KEY (TicketID) REFERENCES ViolationTicketInfo(TicketID)
 );
+
 
 CREATE TABLE PrintFileInfo (
     PrintID VARCHAR(10) PRIMARY KEY,
@@ -132,6 +119,7 @@ CREATE TABLE PrintFileInfo (
     PrintDate DATE,
     PrintTime TIME
 );
+
 INSERT INTO VehicleBasicInfo (VehicleID, LicensePlate, OwnerID, Brand, Model, Color, VehicleType) VALUES
 ('C001', '123 SKT', 'O001', 'Lexus', 'RX', '灰色', '小客車'),
 ('C002', 'JRX-4176', 'O002', 'BMW', 'iX', '綠色', '貨車'),
@@ -244,60 +232,59 @@ INSERT INTO ViolationTypeInfo (ViolationTypeID, ViolationName, ViolationDescript
 (5, '超速 50 公里以上', '駕駛速度超過法定限速 50 公里以上', '交通安全', 5000.00),
 (6, '超速學區內 10 公里以上', '學區內駕駛速度超過法定限速 10 公里以上', '交通安全', 3000.00),
 (7, '高速公路超速 20-40 公里', '高速公路駕駛速度超過法定限速 20 至 40 公里', '交通安全', 4000.00),
-(8, '高速公路超速 40 公里以上', '高速公路駕駛速度超過法定限速 40 公里以上', '交通安全', 6000.00),
 (8, '高速公路超速 40 公里以上', '高速公路駕駛速度超過法定限速 40 公里以上', '交通安全', 6000.00);
 
-INSERT INTO ViolationCaseInfo (CaseID, VehicleID, ViolationTypeID, ViolationLocation, ViolationTime, AssistantID, TicketID, CaseDescription) VALUES
-('A001', 'C001', 1, '台北市信義區松高路與基隆路交叉口', '2024-12-01 14:35:00', 'E001', 'F001', '駕駛超速 10-20 公里'),
-('A002', 'C002', 3, '台北市中山區南京東路與復興北路交叉口', '2024-12-02 16:20:00', 'E002', 'F002', '駕駛超速 30-40 公里'),
-('A003', 'C003', 5, '台北市士林區中山北路與天母東路交叉口', '2024-12-03 10:50:00', 'E003', 'F003', '駕駛超速 50 公里以上'),
-('A004', 'C004', 2, '台北市大安區和平東路與敦化南路交叉口', '2024-12-04 12:15:00', 'E004', 'F004', '駕駛超速 20-30 公里'),
-('A005', 'C005', 4, '台北市文山區木柵路與興隆路交叉口', '2024-12-05 09:45:00', 'E005', 'F005', '駕駛超速 40-50 公里'),
-('A006', 'C006', 6, '台北市信義區松仁路與信義路交叉口', '2024-12-06 17:30:00', 'E001', 'F006', '駕駛超速學區內 10 公里以上'),
-('A007', 'C007', 8, '台北市內湖區康寧路與成功路交叉口', '2024-12-07 19:00:00', 'E002', 'F007', '駕駛高速公路超速 20-40 公里'),
-('A008', 'C008', 7, '台北市萬華區桂林路與和平西路交叉口', '2024-12-08 13:10:00', 'E003', 'F008', '駕駛高速公路超速 40 公里以上'),
-('A009', 'C009', 1, '台北市中正區忠孝西路與博愛路交叉口', '2024-12-09 11:40:00', 'E004', 'F009', '駕駛超速 10-20 公里'),
-('A010', 'C010', 3, '台北市北投區石牌路與承德路交叉口', '2024-12-10 08:25:00', 'E005', 'F010', '駕駛超速 30-40 公里'),
-('A011', 'C011', 2, '台北市松山區八德路與民生路交叉口', '2024-12-11 14:10:00', 'E001', 'F011', '駕駛超速 20-30 公里'),
-('A012', 'C012', 4, '台北市南港區經貿一路與忠孝東路交叉口', '2024-12-12 10:00:00', 'E002', 'F012', '駕駛超速 40-50 公里'),
-('A013', 'C013', 5, '台北市士林區德行路與中山北路交叉口', '2024-12-13 15:45:00', 'E003', 'F013', '駕駛超速 50 公里以上'),
-('A014', 'C014', 6, '台北市大安區敦化南路與仁愛路交叉口', '2024-12-14 09:30:00', 'E004', 'F014', '駕駛超速學區內 10 公里以上'),
-('A015', 'C015', 7, '台北市中山區民權東路與松江路交叉口', '2024-12-15 13:50:00', 'E005', 'F015', '駕駛高速公路超速 20-40 公里'),
-('A016', 'C016', 8, '台北市內湖區新湖一路與成功路交叉口', '2024-12-16 16:20:00', 'E001', 'F016', '駕駛高速公路超速 40 公里以上'),
-('A017', 'C017', 2, '台北市萬華區西園路與艋舺大道交叉口', '2024-12-17 11:15:00', 'E002', 'F017', '駕駛超速 20-30 公里'),
-('A018', 'C018', 4, '台北市文山區興隆路與木柵路交叉口', '2024-12-18 18:35:00', 'E003', 'F018', '駕駛超速 40-50 公里'),
-('A019', 'C019', 5, '台北市北投區中央北路與中山北路交叉口', '2024-12-19 07:50:00', 'E004', 'F019', '駕駛超速 50 公里以上'),
-('A020', 'C020', 3, '台北市中正區南海路與濟南路交叉口', '2024-12-20 12:45:00', 'E001', 'F020', '駕駛超速 30-40 公里'),
-('A021', 'C021', 2, '台北市信義區基隆路與信義路交叉口', '2024-12-21 09:15:00', 'E002', 'F021', '駕駛超速 20-30 公里'),
-('A022', 'C022', 4, '台北市內湖區新湖一路與內湖路交叉口', '2024-12-22 14:40:00', 'E003', 'F022', '駕駛超速 40-50 公里'),
-('A023', 'C023', 6, '台北市文山區木柵路與指南路交叉口', '2024-12-23 18:30:00', 'E004', 'F023', '駕駛超速學區內 10 公里以上'),
-('A024', 'C024', 3, '台北市大同區延平北路與重慶北路交叉口', '2024-12-24 08:00:00', 'E005', 'F024', '駕駛超速 30-40 公里'),
-('A025', 'C025', 5, '台北市內湖區瑞光路與內湖路交叉口', '2024-12-25 11:30:00', 'E001', 'F025', '駕駛超速 50 公里以上'),
-('A026', 'C026', 2, '台北市內湖區康寧路與成功路交叉口', '2024-12-26 10:00:00', 'E002', 'F026', '駕駛超速 20-30 公里'),
-('A027', 'C027', 4, '台北市松山區民權東路與南京東路交叉口', '2024-12-27 12:15:00', 'E003', 'F027', '駕駛超速 40-50 公里'),
-('A028', 'C028', 6, '台北市文山區木柵路與興隆路交叉口', '2024-12-28 15:00:00', 'E004', 'F028', '駕駛超速學區內 10 公里以上'),
-('A029', 'C029', 5, '台北市內湖區成功路與康寧路交叉口', '2024-12-29 14:00:00', 'E005', 'F029', '駕駛超速 50 公里以上'),
-('A030', 'C030', 3, '台北市大安區忠孝東路與青島東路交叉口', '2024-12-30 16:20:00', 'E001', 'F030', '駕駛超速 30-40 公里'),
-('A031', 'C031', 7, '台北市信義區基隆路與信義路交叉口', '2025-01-01 13:10:00', 'E002', 'F031', '駕駛高速公路超速 20-40 公里'),
-('A032', 'C032', 8, '台北市北投區石牌路與中央北路交叉口', '2025-01-02 09:00:00', 'E003', 'F032', '駕駛高速公路超速 40 公里以上'),
-('A033', 'C033', 2, '台北市中山區南京東路與復興北路交叉口', '2025-01-03 15:25:00', 'E004', 'F033', '駕駛超速 20-30 公里'),
-('A034', 'C034', 4, '台北市內湖區瑞光路與內湖路交叉口', '2025-01-04 10:15:00', 'E005', 'F034', '駕駛超速 40-50 公里'),
-('A035', 'C035', 6, '台北市士林區中山北路與天母東路交叉口', '2025-01-05 16:30:00', 'E001', 'F035', '駕駛超速學區內 10 公里以上'),
-('A036', 'C036', 5, '台北市大安區和平東路與敦化南路交叉口', '2025-01-06 11:40:00', 'E002', 'F036', '駕駛超速 50 公里以上'),
-('A037', 'C037', 3, '台北市文山區木柵路與興隆路交叉口', '2025-01-07 18:00:00', 'E003', 'F037', '駕駛超速 30-40 公里'),
-('A038', 'C038', 7, '台北市內湖區成功路與康寧路交叉口', '2025-01-08 14:20:00', 'E004', 'F038', '駕駛高速公路超速 20-40 公里'),
-('A039', 'C039', 8, '台北市中正區忠孝東路與博愛路交叉口', '2025-01-09 09:10:00', 'E005', 'F039', '駕駛高速公路超速 40 公里以上'),
-('A040', 'C040', 2, '台北市北投區石牌路與中山北路交叉口', '2025-01-10 15:30:00', 'E001', 'F040', '駕駛超速 20-30 公里'),
-('A041', 'C041', 3, '台北市文山區木柵路與指南路交叉口', '2025-01-11 13:25:00', 'E002', 'F041', '駕駛超速 30-40 公里'),
-('A042', 'C042', 5, '台北市信義區基隆路與松高路交叉口', '2025-01-12 10:40:00', 'E003', 'F042', '駕駛超速 50 公里以上'),
-('A043', 'C043', 6, '台北市中山區民權東路與松江路交叉口', '2025-01-13 11:55:00', 'E004', 'F043', '駕駛超速學區內 10 公里以上'),
-('A044', 'C044', 2, '台北市南港區經貿一路與忠孝東路交叉口', '2025-01-14 12:30:00', 'E005', 'F044', '駕駛超速 20-30 公里'),
-('A045', 'C045', 3, '台北市松山區八德路與民生路交叉口', '2025-01-15 14:00:00', 'E001', 'F045', '駕駛超速 30-40 公里'),
-('A046', 'C046', 7, '台北市大安區和平東路與敦化南路交叉口', '2025-01-16 16:10:00', 'E002', 'F046', '駕駛高速公路超速 20-40 公里'),
-('A047', 'C047', 8, '台北市文山區木柵路與指南路交叉口', '2025-01-17 18:20:00', 'E003', 'F047', '駕駛高速公路超速 40 公里以上'),
-('A048', 'C048', 2, '台北市內湖區瑞光路與內湖路交叉口', '2025-01-18 09:30:00', 'E004', 'F048', '駕駛超速 20-30 公里'),
-('A049', 'C049', 4, '台北市信義區松高路與基隆路交叉口', '2025-01-19 10:10:00', 'E005', 'F049', '駕駛超速 40-50 公里'),
-('A050', 'C050', 3, '台北市中山區長安東路與民生東路交叉口', '2025-01-20 13:15:00', 'E001', 'F050', '駕駛超速 30-40 公里');
+INSERT INTO ViolationCaseInfo (CaseID, VehicleID, ViolationTypeID, ViolationLocation, ViolationTime, AssistantID, TicketID, CaseDescription,Status) VALUES
+('A001', 'C001', 1, '台北市信義區松高路與基隆路交叉口', '2024-12-01 14:35:00', 'E001', 'F001', '駕駛超速 10-20 公里','已繳費'),
+('A002', 'C002', 3, '台北市中山區南京東路與復興北路交叉口', '2024-12-02 16:20:00', 'E002', 'F002', '駕駛超速 30-40 公里','已繳費'),
+('A003', 'C003', 5, '台北市士林區中山北路與天母東路交叉口', '2024-12-03 10:50:00', 'E003', 'F003', '駕駛超速 50 公里以上','未繳費'),
+('A004', 'C004', 2, '台北市大安區和平東路與敦化南路交叉口', '2024-12-04 12:15:00', 'E004', 'F004', '駕駛超速 20-30 公里','未繳費'),
+('A005', 'C005', 4, '台北市文山區木柵路與興隆路交叉口', '2024-12-05 09:45:00', 'E005', 'F005', '駕駛超速 40-50 公里','未繳費'),
+('A006', 'C006', 6, '台北市信義區松仁路與信義路交叉口', '2024-12-06 17:30:00', 'E001', 'F006', '駕駛超速學區內 10 公里以上','已繳費'),
+('A007', 'C007', 8, '台北市內湖區康寧路與成功路交叉口', '2024-12-07 19:00:00', 'E002', 'F007', '駕駛高速公路超速 20-40 公里','未繳費'),
+('A008', 'C008', 7, '台北市萬華區桂林路與和平西路交叉口', '2024-12-08 13:10:00', 'E003', 'F008', '駕駛高速公路超速 40 公里以上','已繳費'),
+('A009', 'C009', 1, '台北市中正區忠孝西路與博愛路交叉口', '2024-12-09 11:40:00', 'E004', 'F009', '駕駛超速 10-20 公里','已繳費'),
+('A010', 'C010', 3, '台北市北投區石牌路與承德路交叉口', '2024-12-10 08:25:00', 'E005', 'F010', '駕駛超速 30-40 公里','已繳費'),
+('A011', 'C011', 2, '台北市松山區八德路與民生路交叉口', '2024-12-11 14:10:00', 'E001', 'F011', '駕駛超速 20-30 公里','已繳費'),
+('A012', 'C012', 4, '台北市南港區經貿一路與忠孝東路交叉口', '2024-12-12 10:00:00', 'E002', 'F012', '駕駛超速 40-50 公里','已繳費'),
+('A013', 'C013', 5, '台北市士林區德行路與中山北路交叉口', '2024-12-13 15:45:00', 'E003', 'F013', '駕駛超速 50 公里以上','已繳費'),
+('A014', 'C014', 6, '台北市大安區敦化南路與仁愛路交叉口', '2024-12-14 09:30:00', 'E004', 'F014', '駕駛超速學區內 10 公里以上','已繳費'),
+('A015', 'C015', 7, '台北市中山區民權東路與松江路交叉口', '2024-12-15 13:50:00', 'E005', 'F015', '駕駛高速公路超速 20-40 公里','已繳費'),
+('A016', 'C016', 8, '台北市內湖區新湖一路與成功路交叉口', '2024-12-16 16:20:00', 'E001', 'F016', '駕駛高速公路超速 40 公里以上','已繳費'),
+('A017', 'C017', 2, '台北市萬華區西園路與艋舺大道交叉口', '2024-12-17 11:15:00', 'E002', 'F017', '駕駛超速 20-30 公里','未繳費'),
+('A018', 'C018', 4, '台北市文山區興隆路與木柵路交叉口', '2024-12-18 18:35:00', 'E003', 'F018', '駕駛超速 40-50 公里','未繳費'),
+('A019', 'C019', 5, '台北市北投區中央北路與中山北路交叉口', '2024-12-19 07:50:00', 'E004', 'F019', '駕駛超速 50 公里以上','未繳費'),
+('A020', 'C020', 3, '台北市中正區南海路與濟南路交叉口', '2024-12-20 12:45:00', 'E001', 'F020', '駕駛超速 30-40 公里','未繳費'),
+('A021', 'C021', 2, '台北市信義區基隆路與信義路交叉口', '2024-12-21 09:15:00', 'E002', 'F021', '駕駛超速 20-30 公里','已繳費'),
+('A022', 'C022', 4, '台北市內湖區新湖一路與內湖路交叉口', '2024-12-22 14:40:00', 'E003', 'F022', '駕駛超速 40-50 公里','已繳費'),
+('A023', 'C023', 6, '台北市文山區木柵路與指南路交叉口', '2024-12-23 18:30:00', 'E004', 'F023', '駕駛超速學區內 10 公里以上','未繳費'),
+('A024', 'C024', 3, '台北市大同區延平北路與重慶北路交叉口', '2024-12-24 08:00:00', 'E005', 'F024', '駕駛超速 30-40 公里','已繳費'),
+('A025', 'C025', 5, '台北市內湖區瑞光路與內湖路交叉口', '2024-12-25 11:30:00', 'E001', 'F025', '駕駛超速 50 公里以上','已繳費'),
+('A026', 'C026', 2, '台北市內湖區康寧路與成功路交叉口', '2024-12-26 10:00:00', 'E002', 'F026', '駕駛超速 20-30 公里','已繳費'),
+('A027', 'C027', 4, '台北市松山區民權東路與南京東路交叉口', '2024-12-27 12:15:00', 'E003', 'F027', '駕駛超速 40-50 公里','已繳費'),
+('A028', 'C028', 6, '台北市文山區木柵路與興隆路交叉口', '2024-12-28 15:00:00', 'E004', 'F028', '駕駛超速學區內 10 公里以上','已繳費'),
+('A029', 'C029', 5, '台北市內湖區成功路與康寧路交叉口', '2024-12-29 14:00:00', 'E005', 'F029', '駕駛超速 50 公里以上','已繳費'),
+('A030', 'C030', 3, '台北市大安區忠孝東路與青島東路交叉口', '2024-12-30 16:20:00', 'E001', 'F030', '駕駛超速 30-40 公里','已繳費'),
+('A031', 'C031', 7, '台北市信義區基隆路與信義路交叉口', '2025-01-01 13:10:00', 'E002', 'F031', '駕駛高速公路超速 20-40 公里','已繳費'),
+('A032', 'C032', 8, '台北市北投區石牌路與中央北路交叉口', '2025-01-02 09:00:00', 'E003', 'F032', '駕駛高速公路超速 40 公里以上','已繳費'),
+('A033', 'C033', 2, '台北市中山區南京東路與復興北路交叉口', '2025-01-03 15:25:00', 'E004', 'F033', '駕駛超速 20-30 公里','已繳費'),
+('A034', 'C034', 4, '台北市內湖區瑞光路與內湖路交叉口', '2025-01-04 10:15:00', 'E005', 'F034', '駕駛超速 40-50 公里','已繳費'),
+('A035', 'C035', 6, '台北市士林區中山北路與天母東路交叉口', '2025-01-05 16:30:00', 'E001', 'F035', '駕駛超速學區內 10 公里以上','已繳費'),
+('A036', 'C036', 5, '台北市大安區和平東路與敦化南路交叉口', '2025-01-06 11:40:00', 'E002', 'F036', '駕駛超速 50 公里以上','已繳費'),
+('A037', 'C037', 3, '台北市文山區木柵路與興隆路交叉口', '2025-01-07 18:00:00', 'E003', 'F037', '駕駛超速 30-40 公里','已繳費'),
+('A038', 'C038', 7, '台北市內湖區成功路與康寧路交叉口', '2025-01-08 14:20:00', 'E004', 'F038', '駕駛高速公路超速 20-40 公里','已繳費'),
+('A039', 'C039', 8, '台北市中正區忠孝東路與博愛路交叉口', '2025-01-09 09:10:00', 'E005', 'F039', '駕駛高速公路超速 40 公里以上','已繳費'),
+('A040', 'C040', 2, '台北市北投區石牌路與中山北路交叉口', '2025-01-10 15:30:00', 'E001', 'F040', '駕駛超速 20-30 公里','已繳費'),
+('A041', 'C041', 3, '台北市文山區木柵路與指南路交叉口', '2025-01-11 13:25:00', 'E002', 'F041', '駕駛超速 30-40 公里','已繳費'),
+('A042', 'C042', 5, '台北市信義區基隆路與松高路交叉口', '2025-01-12 10:40:00', 'E003', 'F042', '駕駛超速 50 公里以上','未繳費'),
+('A043', 'C043', 6, '台北市中山區民權東路與松江路交叉口', '2025-01-13 11:55:00', 'E004', 'F043', '駕駛超速學區內 10 公里以上','未繳費'),
+('A044', 'C044', 2, '台北市南港區經貿一路與忠孝東路交叉口', '2025-01-14 12:30:00', 'E005', 'F044', '駕駛超速 20-30 公里','未繳費'),
+('A045', 'C045', 3, '台北市松山區八德路與民生路交叉口', '2025-01-15 14:00:00', 'E001', 'F045', '駕駛超速 30-40 公里','未繳費'),
+('A046', 'C046', 7, '台北市大安區和平東路與敦化南路交叉口', '2025-01-16 16:10:00', 'E002', 'F046', '駕駛高速公路超速 20-40 公里','已繳費'),
+('A047', 'C047', 8, '台北市文山區木柵路與指南路交叉口', '2025-01-17 18:20:00', 'E003', 'F047', '駕駛高速公路超速 40 公里以上','未繳費'),
+('A048', 'C048', 2, '台北市內湖區瑞光路與內湖路交叉口', '2025-01-18 09:30:00', 'E004', 'F048', '駕駛超速 20-30 公里','未繳費'),
+('A049', 'C049', 4, '台北市信義區松高路與基隆路交叉口', '2025-01-19 10:10:00', 'E005', 'F049', '駕駛超速 40-50 公里','未繳費'),
+('A050', 'C050', 3, '台北市中山區長安東路與民生東路交叉口', '2025-01-20 13:15:00', 'E001', 'F050', '駕駛超速 30-40 公里','未繳費');
 
 INSERT INTO ViolationTicketInfo (
     TicketID, VehicleID, ViolationTypeID, ViolationLocation, ViolationTime, OfficerID, PhotoLocation, PhotoLongitude, PhotoLatitude, ViolationPhoto, IssuingUnit, SpeedLimit, ActualSpeed, CameraID
@@ -379,6 +366,7 @@ SELECT * FROM AssistantInfo;
 SELECT * FROM ViolationCaseInfo;
 
 
+-- Case Type Statistics View
 DROP VIEW IF EXISTS CaseTypeStatistics;
 CREATE VIEW CaseTypeStatistics AS
 SELECT 
