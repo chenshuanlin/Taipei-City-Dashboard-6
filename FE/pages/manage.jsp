@@ -245,7 +245,7 @@
                             <%= rs.getString("Status") %>
                         </td>
                         <td>
-                            <a href="caseDetail.jsp?id=<%= rs.getString("CaseID") %>">查看詳情</a>
+                            <a href="fd.jsp?id=<%= rs.getString("CaseID") %>">查看詳情</a>
                         </td>
                     </tr>
                 <% } %>

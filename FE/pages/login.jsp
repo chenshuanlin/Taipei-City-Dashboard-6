@@ -36,7 +36,7 @@ pageEncoding="UTF-8"%> <%@ page import="java.sql.*" %>
     = conn.prepareStatement(sqlQuery); pstmt.setString(1, assistantId);
     pstmt.setString(2, password); rs = pstmt.executeQuery(); if (rs.next()) {
     session.setAttribute("assistantId", assistantId);
-    response.sendRedirect("../pages/deal.jsp"); } else { %>
+    response.sendRedirect("../pages/deal.html"); } else { %>
     <script>
       alert("登入失敗！請檢查您的帳號和密碼。");
     </script>
